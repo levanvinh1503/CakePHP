@@ -30,9 +30,10 @@ class UsersController extends AppController
                 $userInfo = $this->Users->get($idUser);
                 $userName = $userInfo['full_name'];
                 $this->set(compact('userName'));
+
                 return $this->redirect(['controller' => 'Users', 'action' => 'dashBoard']);
             } else {
-                $this->Flash->error(__('Invalid username or password, try again'));
+                $this->Flash->error(__('Sai tên đăng nhập hoặc mật khẩu, Vui lòng thử lại !'));
             }
         }
     }
