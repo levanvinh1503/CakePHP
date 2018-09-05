@@ -26,7 +26,7 @@
         <?= $this->Form->input('category-slug', ['label' => 'Đường dẫn', 'class' => 'form-control']);?>
     </div>
     <div class="form-group">
-        <?= $this->Form->input('Chỉnh sửa', ['class' => 'btn btn-primary', 'type' => 'submit', 'name' => 'edit-post'])?>
+        <?= $this->Form->input('Chỉnh sửa', ['class' => 'btn btn-primary', 'type' => 'submit', 'name' => 'edit-post']);?>
     </div>
     <!-- End Form add Category -->
 </div>
