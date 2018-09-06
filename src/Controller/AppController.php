@@ -53,23 +53,26 @@ class AppController extends Controller
          * see https://book.cakephp.org/3.0/en/controllers/components/security.html
          */
         //$this->loadComponent('Security');
-        $this->loadComponent('Auth', [
-            'loginAction' => [
+        
+        $this->loadComponent('Auth', array(
+            'loginAction' => array(
                 'controller' => 'Users',
                 'action' => 'login'
-            ],
-            'loginRedirect' => [
+            ),
+            'loginRedirect' => array(
                 'controller' => 'Users',
                 'action' => 'dashBoard'
-            ],
-            'logoutAction' => [
+            ),
+            'logoutAction' => array(
                 'controller' => 'Users',
                 'action' => 'logout'
-            ],
-            'logoutRedirect' => [
+            ),
+            'logoutRedirect' => array(
                 'controller' => 'Users',
                 'action' => 'login'
-            ]
-        ]);
+            )
+        ));
+        //Pages do not need to be logged
+        $this->Auth->allow(array('register'));
     }
 }

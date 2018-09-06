@@ -150,6 +150,24 @@ $cakeDescription = 'Demo CakePHP';
                 var slugResult = ChangeToSlug(titleInput);
                 $('#post-slug').val(slugResult);
             });
+            /* Bind data record category to form update modal*/
+            $('.btn-show-model').on('click', function () {
+                var currentRow = $(this).closest("tr");
+                var categoryId = currentRow.find("td:eq(0)").text();
+                var categoryName = currentRow.find("td:eq(1)").text();
+                var modalUpdate = $('#show-delete-category');
+                modalUpdate.find('.modal-body #category-id').val(categoryId);
+                modalUpdate.find('.modal-body #category-name').text(categoryName);
+            });
+            /* Bind data record post to form update modal*/
+            $('.btn-show-model').on('click', function () {
+                var currentRow = $(this).closest("tr");
+                var postId = currentRow.find("td:eq(0)").text();
+                var postName = currentRow.find("td:eq(1)").text();
+                var modalUpdate = $('#show-delete-post');
+                modalUpdate.find('.modal-body #post-id').val(postId);
+                modalUpdate.find('.modal-body #post-name').text(postName);
+            });
         });
     </script>
 </body>

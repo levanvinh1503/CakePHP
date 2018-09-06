@@ -49,62 +49,37 @@ class PostsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->nonNegativeInteger('category_id_fkey')
-            ->requirePresence('category_id_fkey', 'create')
-            ->notEmpty('category_id_fkey');
-
-        $validator
             ->scalar('post_title')
-            ->maxLength('post_title', 191)
+            ->maxLength('post_title', 191, 'Tên bài viết tối đa 191 kí tự')
             ->requirePresence('post_title', 'create')
-            ->notEmpty('post_title');
-
-        $validator
-            ->scalar('post_description')
-            ->maxLength('post_description', 16777215)
-            ->requirePresence('post_description', 'create')
-            ->notEmpty('post_description');
+            ->notEmpty('post_title', 'Tên bài viết không được bỏ trống')
+            ->add('post_title', 'unique', array('rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên bài viết đã có'));
 
         $validator
             ->scalar('post_slug')
-            ->maxLength('post_slug', 191)
+            ->maxLength('post_slug', 191, 'Đường dẫn của bài viết tối đa 191 kí tự')
             ->requirePresence('post_slug', 'create')
-            ->notEmpty('post_slug')
-            ->add('post_slug', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->notEmpty('post_slug', 'Đường dẫn của bài viết không được bỏ trống')
+            ->add('post_slug', 'unique', array('rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Trùng đường dẫn bài viết'));
+        $validator
+            ->scalar('post_description')
+            ->maxLength('post_description', 16777215, 'Mô tả ngắn quá dài')
+            ->requirePresence('post_description', 'create')
+            ->notEmpty('post_description', 'Mô tả ngắn của bài viết không được bỏ trống');
+
 
         $validator
             ->scalar('post_content')
             ->requirePresence('post_content', 'create')
-            ->notEmpty('post_content');
+            ->notEmpty('post_content', 'Nội dung bài viết không được bỏ trống');
 
         $validator
-            ->scalar('post_image')
-            ->maxLength('post_image', 191)
             ->requirePresence('post_image', 'create')
-            ->notEmpty('post_image');
-
-        $validator
-            ->integer('post_view')
-            ->requirePresence('post_view', 'create')
-            ->notEmpty('post_view');
-
-        $validator
-            ->scalar('post_status')
-            ->maxLength('post_status', 191)
-            ->requirePresence('post_status', 'create')
-            ->notEmpty('post_status');
-
-        $validator
-            ->dateTime('created_at')
-            ->allowEmpty('created_at');
-
-        $validator
-            ->dateTime('updated_at')
-            ->allowEmpty('updated_at');
+            ->notEmpty('post_image', 'Ảnh đại diện của bài viết không được bỏ trống');
 
         return $validator;
     }
-
+    
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.
@@ -114,7 +89,8 @@ class PostsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->isUnique(['post_slug']));
+        $rules->add($rules->isUnique(array('post_title')));
+        $rules->add($rules->isUnique(array('post_slug')));
 
         return $rules;
     }

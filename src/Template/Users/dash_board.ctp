@@ -14,14 +14,19 @@
                         </div>
                     </div>
                 </div>
-                <a href="list-post">
+                <?= $this->Html->link('
                     <div class="panel-footer">
-                        <span class="pull-left">Xem chi tiết</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
+                    <span class="pull-left">Xem chi tiết</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                    </div>', array(
+                        'controller' => 'Users',
+                        'action' => 'listPost',
+                    ), array(
+                        'escape' => false
+                    ));
+                    ?>
+                </div>
         </div>
         <div class="col-lg-4 col-md-6">
             <div class="panel panel-primary">
@@ -36,13 +41,17 @@
                         </div>
                     </div>
                 </div>
-                <a href="list-category">
-                    <div class="panel-footer">
-                        <span class="pull-left">Xem chi tiết</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
+                <?= $this->Html->link('<div class="panel-footer">
+                    <span class="pull-left">Xem chi tiết</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                    </div>', array(
+                        'controller' => 'Users',
+                        'action' => 'listCategory',
+                    ), array(
+                        'escape' => false
+                    ));
+                    ?>
             </div>
         </div>
     </div>

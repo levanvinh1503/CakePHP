@@ -1,42 +1,26 @@
 <div class="list-addpost-admin">
     <h2 class="title-dashborad">Thêm bài viết</h2>
-    <?php
-    $messageShow = $this->Flash->render();
-    if ($messageShow) {
-        ?>
-        <div class="alert alert-success" onclick="this.classList.add('hidden')"><?= $messageShow?></div>
-        <?php
-    }
-    if (!empty($errorsValidator)) {
-        echo '<div class="alert alert-danger">';
-        foreach ($errorsValidator as $keyError => $valueError) {
-            foreach ($valueError as $keyItem => $valueItem) {
-                echo $valueItem . '<br>';
-            }
-        }
-        echo '</div>';
-    }
-    ?>
+    <?= $this->Flash->render('add-post'); ?>
     <!-- Form Edit Post -->
-    <?= $this->Form->create('', ['id' => 'form-edit-post']);?>
+    <?= $this->Form->create('post', array('id' => 'form-edit-post', 'type' => 'file'));?>
 
     <div class="form-group">
-        <?= $this->Form->input('post-title', ['label' => 'Tên bài viết', 'class' => 'form-control', 'id' => 'post-title']);?>
+        <?= $this->Form->input('post_title', array('label' => 'Tên bài viết', 'class' => 'form-control', 'id' => 'post-title', 'placeholder' => 'Nhập tên bài viết'));?>
     </div>
     <div class="form-group">
-        <?= $this->Form->input('post-slug', ['label' => 'Đường dẫn', 'class' => 'form-control', 'id' => 'post-slug']);?>
+        <?= $this->Form->input('post_slug', array('label' => 'Đường dẫn', 'class' => 'form-control', 'id' => 'post-slug', 'placeholder' => 'Đường dẫn bài viết (Tạo tự động)'));?>
     </div>
     <div class="form-group">
-        <?= $this->Form->input('post-description', ['label' => 'Mô tả ngắn', 'class' => 'form-control']);?>
+        <?= $this->Form->input('post_description', array('label' => 'Mô tả ngắn', 'class' => 'form-control', 'placeholder' => 'Mô tả ngắn của bài viết'));?>
     </div>
     <div class="form-group">
-        <?= $this->Form->input('Nội dung', ['type' => 'textarea', 'class' => 'ckeditor form-control', 'id' => 'post-content', 'name' => 'post-content'])?>
+        <?= $this->Form->input('Nội dung', array('type' => 'textarea', 'class' => 'ckeditor form-control', 'id' => 'post-content', 'name' => 'post_content'))?>
     </div>
     <div class="form-group">
-        <?= $this->Form->input('post-image', ['label' => 'Ảnh đại diện', 'class' => 'form-control', 'type' => 'file']);?>
+        <?= $this->Form->input('post_image', array('label' => 'Ảnh đại diện', 'class' => 'form-control', 'type' => 'file'));?>
     </div>
     <div class="form-group">
-        <select class="form-control" id="post-category-add" name="post-category-add">
+        <select class="form-control" id="post-category-add" name="category_id_fkey">
             <?php 
             foreach ($categoryModel as $keyCategory => $valueCategory) {
                 ?>
@@ -47,7 +31,7 @@
         </select>
     </div>
     <div class="form-group col-md-12">
-        <?= $this->Form->input('Thêm', ['class' => 'btn btn-primary', 'type' => 'submit', 'name' => 'add-post'])?>
+        <?= $this->Form->input('Thêm', array('class' => 'btn btn-primary', 'type' => 'submit', 'name' => 'add-post'))?>
     </div>
     <?=$this->Form->end();?>
 

@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\I18n\Time;
 use Cake\Validation\Validator;
+use Cake\Filesystem\File;
 
 /**
  * Users Controller
@@ -15,13 +16,60 @@ use Cake\Validation\Validator;
 class UsersController extends AppController
 {
     /**
+     * Register user
+     * 
+     * @return \Cake\Http\Response|void
+     */
+    public function register()
+    {
+        $this->set('title', 'Đăng ký');
+        $this->viewBuilder()->setLayout('login');
+        $this->loadModel('Users');
+        $dateNow = Time::now();
+        $dateCreate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        $newUser = $this->Users->newEntity();
+        if ($this->request->is('post')) {
+            $messageValidation = '';
+            //Validate form data
+            $checkValidation = $this->Users->newEntity($this->request->getData());
+            foreach ($checkValidation->errors() as $keyArray => $itemArray) {
+                foreach ($itemArray as $keyMessage => $valuekeyMessage) {
+                    if (!empty($messageValidation)) {
+                        $messageValidation .= "<br/>";
+                    }
+                    $messageValidation .= $valuekeyMessage;
+                }
+            }
+            if (empty($messageValidation)) {
+                $reqData = $this->request->getData();
+                $reqData['created_at'] = $dateCreate;
+                $reqData['updated_at'] = $dateCreate;
+                $dataUser = $this->Users->patchEntity($newUser, $reqData);
+                if ($this->Users->save($dataUser)) {
+                    $this->Flash->success('Đăng ký thành công', array(
+                        'key' => 'register',
+                        'params' => array()
+                    ));
+                    return $this->redirect(array('controller' => 'Users', 'action' => 'register'));
+                }
+            } else {
+                $this->Flash->error($messageValidation, array(
+                    'key' => 'register',
+                    'params' => array('escape' => false)
+                ));
+            }
+        }
+    }
+
+    /**
      * Login method
      * 
      * @return \Cake\Http\Response|void
      */
     public function login()
     {
-        $this->layout = 'login';
+        $this->set('title', 'Đăng nhập');
+        $this->viewBuilder()->setLayout('login');
         if ($this->request->is('post')) {
             $user = $this->Auth->identify();
             if ($user) {
@@ -31,9 +79,12 @@ class UsersController extends AppController
                 $userName = $userInfo['full_name'];
                 $this->set(compact('userName'));
 
-                return $this->redirect(['controller' => 'Users', 'action' => 'dashBoard']);
+                return $this->redirect(array('controller' => 'Users', 'action' => 'dashBoard'));
             } else {
-                $this->Flash->error(__('Sai tên đăng nhập hoặc mật khẩu, Vui lòng thử lại !'));
+                $this->Flash->error('Sai tên đăng nhập hoặc mật khẩu, Vui lòng thử lại !', array(
+                    'key' => 'login',
+                    'params' => array()
+                ));
             }
         }
     }
@@ -49,13 +100,14 @@ class UsersController extends AppController
     }
 
     /**
-     * [dashBoard description]
+     * Admin layout page
      * 
      * @return \Cake\Http\Response|void
      */
     public function dashBoard()
     {
-        $this->layout = 'dashboard';
+        $this->set('title', 'Dash Board');
+        $this->viewBuilder()->setLayout('dashboard');
         $categoryModel = $this->loadModel('Category');
         $countCategory = $categoryModel->find()->count();
         $postModel = $this->loadModel('Posts');
@@ -70,7 +122,8 @@ class UsersController extends AppController
      */
     public function listCategory()
     {
-        $this->layout = 'dashboard';
+        $this->set('title', 'Danh sách chuyên mục');
+        $this->viewBuilder()->setLayout('dashboard');
         $this->loadModel('Category');
         $arrayCategory = $this->Category->find()->contain(['Posts']);
         $this->set(compact('arrayCategory'));
@@ -83,7 +136,8 @@ class UsersController extends AppController
      */
     public function listPost()
     {
-        $this->layout = 'dashboard';
+        $this->set('title', 'Danh sách bài viết');
+        $this->viewBuilder()->setLayout('dashboard');
         $this->loadModel('Posts');
         $arrayPost = $this->paginate($this->Posts, array(
             'contain' => array('Category'), 
@@ -99,32 +153,49 @@ class UsersController extends AppController
      */
     public function addCategory()
     {
+        $this->set('title', 'Thêm chuyên mục');
+        $this->viewBuilder()->setLayout('dashboard');
         $dateNow = Time::now();
         $dateCreate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
-        $this->layout = 'dashboard';
         $categoryModel = $this->loadModel('Category');
         $newCategory = $categoryModel->newEntity();
         if ($this->request->is('post')) {
             //validator
-            $validatorForm = new Validator();
-            $validatorForm
-            ->requirePresence('category-name')
-            ->notEmpty('category-name', 'Không được bỏ trống tên chuyên mục')
-            ->requirePresence('category-slug')
-            ->notEmpty('category-slug', 'Không được bỏ trống đường dẫn chuyên mục');
-            $errorsValidator = $validatorForm->errors($this->request->getData());
+            $messageValidation = '';
+            //Validate form data
+            $checkValidation = $categoryModel->newEntity($this->request->getData());
+            foreach ($checkValidation->errors() as $keyArray => $itemArray) {
+                foreach ($itemArray as $keyMessage => $valuekeyMessage) {
+                    if (!empty($messageValidation)) {
+                        $messageValidation .= "<br/>";
+                    }
+                    $messageValidation .= $valuekeyMessage;
+                }
+            }
 
             //insert category
-            if (empty($errorsValidator)) {
-                $newCategory->category_name = $this->request->getData('category-name');
-                $newCategory->category_slug = $this->request->getData('category-slug');
-                $newCategory->created_at = $dateCreate;
-                $newCategory->updated_at = $dateCreate;
-                if ($categoryModel->save($newCategory)) {
-                    $this->Flash->success(__('Thêm chuyên mục thành công'));
-                    return $this->redirect(['controller' => 'Users', 'action' => 'addCategory']);
+            if (empty($messageValidation)) {
+                $reqData = $this->request->getData();
+                $reqData['created_at'] = $dateCreate;
+                $reqData['updated_at'] = $dateCreate;
+                $dataCategory = $this->Category->patchEntity($newCategory, $reqData);
+                if ($categoryModel->save($dataCategory)) {
+                    $this->Flash->success('Thêm chuyên mục thành công', array(
+                        'key' => 'add-category',
+                        'params' => array()
+                    ));
+                    return $this->redirect(array('controller' => 'Users', 'action' => 'addCategory'));
+                } else {
+                    $this->Flash->error('Thêm chuyên mục thất bại, vui lòng thử lại !', array(
+                        'key' => 'add-category',
+                        'params' => array()
+                    ));
                 }
-                $this->Flash->error(__('Thêm chuyên mục thất bại. Vui lòng thử lại !'));
+            } else {
+                $this->Flash->error($messageValidation, array(
+                    'key' => 'add-category',
+                    'params' => array('escape' => false)
+                ));
             }
         }
         $this->set(compact('errorsValidator'));
@@ -137,94 +208,162 @@ class UsersController extends AppController
      */
     public function addPost()
     {
+        $this->set('title', 'Thêm bài viết');
+        $this->viewBuilder()->setLayout('dashboard');
         $dateNow = Time::now();
         $dateCreate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
-        $this->layout = 'dashboard';
         $categoryModel = $this->loadModel('Category')->find();
         $postModel = $this->loadModel('Posts');
         $newPost = $postModel->newEntity();
         if ($this->request->is('post')) {
             //validator
-            $validatorForm = new Validator();
-            $validatorForm
-            ->requirePresence('post-title')
-            ->notEmpty('post-title', 'Không được bỏ trống tên bài viết')
-            ->requirePresence('post-slug')
-            ->notEmpty('post-slug', 'Không được bỏ trống đường dẫn bài viết')
-            ->requirePresence('post-image')
-            ->notEmpty('post-image', 'Ảnh đại diện không được bỏ trống');
-            $errorsValidator = $validatorForm->errors($this->request->getData());
-
-            //insert post
-            if (empty($errorsValidator)) {
-                $newPost->category_id_fkey = $this->request->getData('post-category-add');
-                $newPost->post_title = $this->request->getData('post-title');
-                $newPost->post_slug = $this->request->getData('post-slug');
-                $newPost->post_description = $this->request->getData('post-description');
-                $newPost->post_content = $this->request->getData('post-content');
-                $newPost->post_image = $this->request->getData('post-image');
-                $newPost->post_view = 0;
-                $newPost->post_status = 0;
-                $newPost->created_at = $dateCreate;
-                $newPost->updated_at = $dateCreate;
-                if ($postModel->save($newPost)) {
-                    $this->Flash->success(__('Thêm bài viết thành công'));
-                    return $this->redirect(['controller' => 'Users', 'action' => 'addPost']);
+            $messageValidation = '';
+            //Validate form data
+            $checkValidation = $postModel->newEntity($this->request->getData());
+            foreach ($checkValidation->errors() as $keyArray => $itemArray) {
+                foreach ($itemArray as $keyMessage => $valuekeyMessage) {
+                    if (!empty($messageValidation)) {
+                        $messageValidation .= "<br/>";
+                    }
+                    $messageValidation .= $valuekeyMessage;
                 }
-                $this->Flash->error(__('Thêm bài viết thất bại. Vui lòng thử lại !'));
+            }
+            //insert post
+            if (empty($messageValidation)) {
+                $reqData = $this->request->getData();
+                $reqData['created_at'] = $dateCreate;
+                $reqData['updated_at'] = $dateCreate;
+                $fileName = $this->request->getData('post_image');
+                $filePath = WWW_ROOT . 'img\\' . $fileName['name'];
+                move_uploaded_file($fileName['tmp_name'], $filePath);
+                $reqData['post_image'] = $fileName['name'];
+                $datePost = $this->Posts->patchEntity($newPost, $reqData);
+                if ($postModel->save($datePost)) {
+                    $this->Flash->success('Thêm bài viết thành công', array(
+                        'key' => 'add-post',
+                        'params' => array()
+                    ));
+                    return $this->redirect(array('controller' => 'Users', 'action' => 'addPost'));
+                }
+                $this->Flash->error('Thêm bài viết thất bại. Vui lòng thử lại !', array(
+                    'key' => 'add-post',
+                    'params' => array()
+                ));
+            } else {
+                $this->Flash->error($messageValidation, array(
+                    'key' => 'add-post',
+                    'params' => array('escape' => false)
+                ));
             }
         }
         $this->set(compact('categoryModel', 'errorsValidator'));
     }
 
     /**
-     * Edit method
+     * Edit the catalog into the database
+     * 
+     * @param  string|null $id Category id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function editCategory($id = null)
+    {
+        $this->set('title', 'Chỉnh sửa chuyên mục');
+        $this->viewBuilder()->setLayout('dashboard');
+        $dateNow = Time::now();
+        $dateUpdate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        $this->loadModel('Category');
+        $editCategory = $this->Category->get($id, array(
+            'contain' => array()
+        ));
+        if ($this->request->is(array('patch', 'post', 'put'))) {
+
+            //update category
+            $arrayCategory = $this->request->getData();
+            $arrayCategory['updated_at'] = $dateUpdate;
+
+            $categoryData = $this->Category->patchEntity($editCategory, $arrayCategory);
+
+            if ($this->Category->save($categoryData)) {
+                $this->Flash->success('Sửa chuyên mục thành công', array(
+                    'key' => 'edit-category',
+                    'params' => array()
+                ));
+                return $this->redirect(array('action' => 'editCategory/'.$id.''));
+            } else {
+                //validator
+                $messageValidation = '';
+                //Validate form data
+                $checkValidation = $this->Category->newEntity($this->request->getData());
+                foreach ($checkValidation->errors() as $keyArray => $itemArray) {
+                    foreach ($itemArray as $keyMessage => $valuekeyMessage) {
+                        if (!empty($messageValidation)) {
+                            $messageValidation .= "<br/>";
+                        }
+                        $messageValidation .= $valuekeyMessage;
+                    }
+                }
+
+                $this->Flash->error($messageValidation, array(
+                    'key' => 'edit-category',
+                    'params' => array('escape' => false)
+                ));
+            }
+        }
+
+        $this->set(compact('editCategory', 'errorsValidator'));
+    }
+
+    /**
+     * Edit the post into the database
      *
-     * @param string|null $id User id.
+     * @param string|null $id Post id.
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function editPost($id = null)
     {
+        $this->set('title', 'Chỉnh sửa bài viết');
+        $this->viewBuilder()->setLayout('dashboard');
         $dateNow = Time::now();
         $dateUpdate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
-        $this->layout = 'dashboard';
         $this->loadModel('Posts');
-        $editPost = $this->Posts->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            //validator
-            $validatorForm = new Validator();
-            $validatorForm
-            ->requirePresence('post-title')
-            ->notEmpty('post-title', 'Không được bỏ trống tên bài viết')
-            ->requirePresence('post-slug')
-            ->notEmpty('post-slug', 'Không được bỏ trống đường dẫn bài viết');
-            $errorsValidator = $validatorForm->errors($this->request->getData());
-
-            //update post
-            if (empty($errorsValidator)) {
-
-                $dataImage = $this->request->getData('old-post-image');
-                if($this->request->data['post-image']) {
-                    $dataImage = $this->request->data['post-image'];
+        $editPost = $this->Posts->get($id, array(
+            'contain' => array()
+        ));
+        if ($this->request->is(array('patch', 'post', 'put'))) {
+            $arrayPost = $this->request->getData();
+            $arrayPost['updated_at'] = $dateUpdate;
+            $fileName = $this->request->getData('post-image');
+            if (!empty($fileName['name'])) {
+                $filePath = WWW_ROOT . 'img\\' . $fileName['name'];
+                move_uploaded_file($fileName['tmp_name'], $filePath);
+                $arrayPost['post_image'] = $fileName['name'];
+            }
+            $postData = $this->Posts->patchEntity($editPost, $arrayPost);
+            if ($this->Posts->save($postData)) {
+                $this->Flash->success('Sửa bài viết thành công', array(
+                    'key' => 'edit-post',
+                    'params' => array()
+                ));
+                return $this->redirect(array('action' => 'editPost/'.$id.''));
+            } else {
+                //validator
+                $messageValidation = '';
+                //Validate form data
+                $checkValidation = $this->Posts->newEntity($this->request->getData());
+                foreach ($checkValidation->errors() as $keyArray => $itemArray) {
+                    foreach ($itemArray as $keyMessage => $valuekeyMessage) {
+                        if (!empty($messageValidation)) {
+                            $messageValidation .= "<br/>";
+                        }
+                        $messageValidation .= $valuekeyMessage;
+                    }
                 }
-                $arrayPost = array(
-                    'category_id_fkey' => $this->request->getData('post-category-update'),
-                    'post_title' => $this->request->getData('post-title'),
-                    'post_slug' => $this->request->getData('post-slug'),
-                    'post_description' => $this->request->getData('post-description'),
-                    'post_content' => $this->request->getData('post-content'),
-                    'post_image' => $dataImage,
-                    'updated_at' => $dateUpdate
-                );
-                $postData = $this->Posts->patchEntity($editPost, $arrayPost);
-                if ($this->Posts->save($postData)) {
-                    $this->Flash->set(__('Sửa bài viết thành công'));
-                    return $this->redirect(['action' => 'editPost/'.$id.'']);
-                }
-                $this->Flash->error(__('Sửa bài viết thất bại. Vui lòng thử lại !'));
+                $this->Flash->success($messageValidation, array(
+                    'key' => 'edit-post',
+                    'params' => array('escape' => false)
+                ));
             }
         }
         
@@ -234,22 +373,57 @@ class UsersController extends AppController
     }
 
     /**
-     * Delete method
+     * Delete category method
      *
-     * @param string|null $id User id.
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function deleteCategory()
     {
-        $this->request->allowMethod(['post', 'delete']);
-        $user = $this->Users->get($id);
-        if ($this->Users->delete($user)) {
-            $this->Flash->success(__('The user has been deleted.'));
+        $this->request->allowMethod(array('post', 'delete'));
+        $idCategory = $this->request->getData('category-id');
+        $this->loadModel('Category');
+        $deleteCategory = $this->Category->get($idCategory);
+        if ($this->Category->delete($deleteCategory)) {
+            $this->Flash->success('Xóa chuyên mục thành công', array(
+                'key' => 'delete-category',
+                'params' => array()
+            ));
         } else {
-            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+            $this->Flash->error('Xóa chuyên mục thất bại. Vui lòng thử lại !', array(
+                'key' => 'delete-category',
+                'params' => array()
+            ));
+
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect(array('action' => 'listCategory'));
+    }
+
+    /**
+     * Delete post method
+     *
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function deletePost()
+    {
+        $this->request->allowMethod(array('post', 'delete'));
+        $idPost = $this->request->getData('post-id');
+        $this->loadModel('Posts');
+        $deletePost = $this->Posts->get($idPost);
+        if ($this->Posts->delete($deletePost)) {
+            $this->Flash->success('Xóa bài viết thành công', array(
+                'key' => 'delete-post',
+                'params' => array()
+            ));
+        } else {
+            $this->Flash->error('Xóa bài viết thất bại, vui lòng thử lại !', array(
+                'key' => 'delete-post',
+                'params' => array()
+            ));
+        }
+
+        return $this->redirect(array('action' => 'listPost'));
     }
 }
