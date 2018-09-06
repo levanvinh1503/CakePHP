@@ -79,12 +79,18 @@ class UsersController extends AppController
                 $userName = $userInfo['full_name'];
                 $this->set(compact('userName'));
 
+<<<<<<< HEAD
                 return $this->redirect(array('controller' => 'Users', 'action' => 'dashBoard'));
             } else {
                 $this->Flash->error('Sai tên đăng nhập hoặc mật khẩu, Vui lòng thử lại !', array(
                     'key' => 'login',
                     'params' => array()
                 ));
+=======
+                return $this->redirect(['controller' => 'Users', 'action' => 'dashBoard']);
+            } else {
+                $this->Flash->error(__('Sai tên đăng nhập hoặc mật khẩu, Vui lòng thử lại !'));
+>>>>>>> af30548bdf92739aadf32ae7e0a85f7a361d4559
             }
         }
     }
