@@ -5,6 +5,7 @@ use App\Controller\AppController;
 use Cake\I18n\Time;
 use Cake\Validation\Validator;
 use Cake\Filesystem\File;
+use Cake\ORM\Query;
 
 /**
  * Users Controller
@@ -124,7 +125,30 @@ class UsersController extends AppController
         $this->set('title', 'Danh sách chuyên mục');
         $this->viewBuilder()->setLayout('dashboard');
         $this->loadModel('Category');
-        $arrayCategory = $this->Category->find()->contain(['Posts']);
+        $keyWord = '%' . $this->request->getQuery('search') . '%';
+        
+        if ($this->request->is(array('post'))) {
+            $keyWord = '%' . $this->request->getData('search') . '%';
+        }
+
+        if (empty($keyWord)) {
+            $keyWord = '%%';
+        }
+
+        $arrayCategory = $this->paginate($this->Category->find()->where(array(
+            'OR' => array(
+                'category_name LIKE' => $keyWord,
+                'category_slug LIKE' => $keyWord
+            )
+        )), array(
+            'limit' => 2,
+            'contain' => array('Posts')
+        ));
+
+        if ($this->request->is(array('post'))) {
+            $this->redirect(array('controller' => 'Users', 'action' => 'listCategory', 'search' => $keyWord));
+            $this->set(compact('arrayCategory'));
+        }
         $this->set(compact('arrayCategory'));
     }
 
@@ -138,10 +162,32 @@ class UsersController extends AppController
         $this->set('title', 'Danh sách bài viết');
         $this->viewBuilder()->setLayout('dashboard');
         $this->loadModel('Posts');
-        $arrayPost = $this->paginate($this->Posts, array(
-            'contain' => array('Category'), 
-            'order' => array('Posts.created_at' => 'desc')
+        //Get the keyword "search"
+        $keyWord = '%' . $this->request->getQuery('search') . '%';
+        //get keyword submit form
+        if ($this->request->is(array('post'))) {
+            $keyWord = '%' . $this->request->getData('search') . '%';
+        }
+        //define keyword
+        if (empty($keyWord)) {
+            $keyWord = '%%';
+        }
+
+        $arrayPost = $this->paginate($this->Posts->find()->where(array(
+            'OR' => array(
+                'Category.category_name LIKE' => $keyWord,
+                'Posts.post_title LIKE' => $keyWord
+            )
+        )), array(
+            'limit' => 5,
+            'contain' => array('Category')
         ));
+
+        if ($this->request->is(array('post'))) {
+            $this->redirect(array('controller' => 'Users', 'action' => 'listPost', 'search' => $keyWord));
+            $this->set(compact('arrayPost'));
+        }
+
         $this->set(compact('arrayPost'));
     }
 
@@ -177,6 +223,11 @@ class UsersController extends AppController
                 $reqData = $this->request->getData();
                 $reqData['created_at'] = $dateCreate;
                 $reqData['updated_at'] = $dateCreate;
+                $strCateName = htmlentities($this->request->getData('category_name'), ENT_COMPAT, 'UTF-8');
+                $strCateSlug= htmlentities($this->request->getData('category_slug'), ENT_COMPAT, 'UTF-8');
+                $reqData['category_name'] = htmlentities($strCateName, ENT_COMPAT, 'UTF-8');
+                $reqData['category_slug'] = htmlentities($strCateSlug, ENT_COMPAT, 'UTF-8');
+
                 $dataCategory = $this->Category->patchEntity($newCategory, $reqData);
                 if ($categoryModel->save($dataCategory)) {
                     $this->Flash->success('Thêm chuyên mục thành công', array(
@@ -236,6 +287,15 @@ class UsersController extends AppController
                 $filePath = WWW_ROOT . 'img\\' . $fileName['name'];
                 move_uploaded_file($fileName['tmp_name'], $filePath);
                 $reqData['post_image'] = $fileName['name'];
+
+                $strPostTitle = htmlentities($this->request->getData('post_title'), ENT_COMPAT, 'UTF-8');
+                $strPostSlug= htmlentities($this->request->getData('post_slug'), ENT_COMPAT, 'UTF-8');
+                $strPostDescription= htmlentities($this->request->getData('post_description'), ENT_COMPAT, 'UTF-8');
+
+                $reqData['post_title'] = htmlentities($strPostTitle, ENT_COMPAT, 'UTF-8');
+                $reqData['post_slug'] = htmlentities($strPostSlug, ENT_COMPAT, 'UTF-8');
+                $reqData['post_description'] = htmlentities($strPostDescription, ENT_COMPAT, 'UTF-8');
+
                 $datePost = $this->Posts->patchEntity($newPost, $reqData);
                 if ($postModel->save($datePost)) {
                     $this->Flash->success('Thêm bài viết thành công', array(

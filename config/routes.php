@@ -82,9 +82,9 @@ Router::scope('/', function (RouteBuilder $routes) {
 
 Router::scope('/users', function ($routes) {
     $routes->connect('/dash-board', array('controller' => 'Users', 'action' => 'dashBoard'));
-    $routes->connect('/list-category', array('controller' => 'Users', 'action' => 'listCategory'), array('name' => 'listcategory'));
+    $routes->connect('/list-category', array('controller' => 'Users', 'action' => 'listCategory'), array('id' => '\d+'));
 
-    $routes->connect('/list-post', array('controller' => 'Users', 'action' => 'listPost'), array('name' => 'listpost'));
+    $routes->connect('/list-post', array('controller' => 'Users', 'action' => 'listPost'), array('id' => '\d+'));
 
     $routes->connect('/add-post', array('controller' => 'Users', 'action' => 'addPost'), array('name' => 'addpost'));
 

@@ -74,5 +74,7 @@ class AppController extends Controller
         ));
         //Pages do not need to be logged
         $this->Auth->allow(array('register'));
+
+        $this->loadComponent('Paginator');
     }
 }

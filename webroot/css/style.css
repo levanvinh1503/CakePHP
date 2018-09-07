@@ -444,3 +444,49 @@ div.dataTables_wrapper div.dataTables_filter input, div.dataTables_wrapper div.d
 #cke_1_contents {
     height: 500px !important;
 }
+/**/
+.pagination-block {
+    text-align: center;
+}
+.pagination-list li {
+    display: inline-block;
+}
+.pagination-list li a {
+    border: 1px solid;
+    padding: 5px 10px;
+    margin: 1px;
+}
+.pagination-list li a:hover {
+    background: green;
+    border: 1px solid green;
+    color: white;
+}
+.pagination-list li a {
+    text-decoration: none;
+}
+.pagination-list li.active a {
+    background: green;
+    color: white;
+    border: 1px solid green;
+}
+#search {
+    border-radius: 4px;
+    padding: 5px;
+    border: 1px solid #c0c0c0;
+}
+.btn-search {
+    background: transparent;
+    border: none;
+    padding: 5px;
+    position: absolute;
+    top: 13px;
+    right: 2px;
+}
+.search-block {
+    position: relative;
+    padding: 10px 0;
+    float: left;
+}
+.search-block label {
+    margin-right: 10px;
+}

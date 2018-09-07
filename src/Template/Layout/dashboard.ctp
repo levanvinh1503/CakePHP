@@ -138,6 +138,18 @@ $cakeDescription = 'Demo CakePHP';
     <?= $this->Html->script('ckeditor/ckeditor')?>
     <script type="text/javascript">
         $(document).ready(function () {
+            /*Ajax search*/
+            $('#search').keyup(function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '/democakephp/users/ajax-search',
+                    type: 'POST',
+                    data: $('#form-search').serialize(),
+                    success: function (dataResult) {
+                        console.log(dataResult.arrayPost);
+                    }
+                });
+            })
             /*Convert string to url*/
             $('#category-name').keyup(function () {
                 var titleInput = $(this).val();

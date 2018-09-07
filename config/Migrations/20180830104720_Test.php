@@ -12,5 +12,10 @@ class Test extends AbstractMigration
      */
     public function change()
     {
+        // create the table
+        $table = $this->table('test');
+        $table->addColumn('user_id', 'integer')
+              ->addColumn('created', 'datetime')
+              ->create();
     }
 }

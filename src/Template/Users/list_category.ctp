@@ -2,40 +2,71 @@
     <h2 class="title-dashborad">Danh sách chuyên mục</h2>
     <?= $this->Flash->render('delete-category')?>
     <!-- Table Category -->
+    <div class="search-block">
+        <?= $this->Form->create('search', array('id' => 'form-search', 'url' => array('controller' => 'Users', 'action' => 'listCategory')));?>
+        <?= $this->Form->input('search')?>
+        <?= $this->Form->button('<i class="fa fa-search"></i>', array('class' => 'btn-search', 'escape' => false))?>
+        <?= $this->Form->end()?>
+    </div>
     <table class="table table-striped table-bordered table-hover" id="table-list-category">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Tên chuyên mục</th>
-                <th>Đường dẫn</th>
+                <th><?= $this->Paginator->sort('id', $this->Html->image('sort_both.png'), array('escape' => false))?>ID</th>
+                <th><?= $this->Paginator->sort('category_name', $this->Html->image('sort_both.png'), array('escape' => false))?>Tên chuyên mục</th>
+                <th><?= $this->Paginator->sort('category_slug', $this->Html->image('sort_both.png'), array('escape' => false))?>Đường dẫn</th>
                 <th>Số bài viết</th>
                 <th>Hành động</th>
             </tr>
         </thead>
         <tbody>
             <?php 
-            foreach ($arrayCategory as $keyCategory => $valueCategory) {
+            if (count($arrayCategory) > 0) {
+                foreach ($arrayCategory as $keyCategory => $valueCategory) {
+                    ?>
+                    <tr>
+                        <td><?= $valueCategory->id ?></td>
+                        <td><?= h($valueCategory->category_name) ?></td>
+                        <td><?= h($valueCategory->category_slug) ?></td>
+                        <td><?= count($valueCategory->posts)?> bài viết</td>
+                        <td>
+                            <?= $this->Html->link('<i class="fa fa-edit"></i> Sửa', array(
+                                'controller' => 'Users',
+                                'action' => 'editCategory',
+                                'id' => $valueCategory->id
+                            ), array(
+                                'class' => 'btn btn-primary edit-category',
+                                'escape' => false
+                            ))?>
+                            <button class="btn btn-danger btn-sm btn-show-model" data-toggle="modal" data-target="#show-delete-category"><i class="fa fa-trash"></i> Xóa</button>
+                        </td>
+                    </tr>
+                    <?php 
+                }
+            } else {
                 ?>
                 <tr>
-                    <td><?= $valueCategory->id ?></td>
-                    <td><?= $valueCategory->category_name ?></td>
-                    <td><?= $valueCategory->category_slug ?></td>
-                    <td><?= count($valueCategory->posts)?> bài viết</td>
-                    <td>
-                        <?= $this->Html->link('<i class="fa fa-edit"></i> Sửa', array(
-                            'controller' => 'Users',
-                            'action' => 'editCategory',
-                            'id' => $valueCategory->id
-                        ), array(
-                            'class' => 'btn btn-primary edit-category',
-                            'escape' => false
-                        ))?>
-                        <button class="btn btn-danger btn-sm btn-show-model" data-toggle="modal" data-target="#show-delete-category"><i class="fa fa-trash"></i> Xóa</button>
-                    </td>
+                    <td colspan="7" style="text-align: center;">Không có dữ liệu</td>
                 </tr>
-            <?php }?>
+                <?php
+            }
+            ?>
         </tbody>
     </table>
+    <?php if (count($arrayCategory) > 0) { ?>
+        <div class="pagination-block">
+            <ul class="pagination-list">
+                <?php 
+                if (!empty($this->Paginator->numbers())) {
+                    echo $this->Paginator->prev('<i class="fa fa-caret-left"></i>', array('escape' => false), null, array('class' => 'prev disabled'));
+                }
+                echo $this->Paginator->numbers();
+                if (!empty($this->Paginator->numbers())) {
+                    echo $this->Paginator->next('<i class="fa fa-caret-right"></i>', array('escape' => false), null, array('class' => 'next disabled'));
+                }
+                ?>
+            </ul>
+        </div>
+    <?php }?>
     <!-- End table Category -->
 </div>
 <!-- End block list category -->
