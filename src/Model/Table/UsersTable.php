@@ -49,36 +49,36 @@ class UsersTable extends Table
 
         $validator
             ->scalar('username')
-            ->maxLength('username', 191, 'Tên đăng nhập tối đa 191 kí tự')
+            ->maxLength('username', 191, MAXLENGTH_USER_USERNAME)
             ->requirePresence('username', 'create')
-            ->notEmpty('username', 'Tên đăng nhập không được bỏ trống')
-            ->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên đăng nhập đã có người sử dụng']);
+            ->notEmpty('username', REQUIRED_USER_USERNAME)
+            ->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => UNIQUE_USER_USERNAME]);
 
         $validator
             ->scalar('full_name')
-            ->maxLength('full_name', 191, 'Họ tên tối đa 191 kí tự')
+            ->maxLength('full_name', 191, MAXLENGTH_USER_FULLNAME)
             ->requirePresence('full_name', 'create')
-            ->notEmpty('full_name', 'Họ tên không được bỏ trống');
+            ->notEmpty('full_name', REQUIRED_USER_FULLNAME);
 
         $validator
             ->email('email')
             ->requirePresence('email', 'create')
-            ->maxLength('email', 191, 'Email tối đa 191 kí tự')
-            ->notEmpty('email', 'Email không được bỏ trống')
-            ->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Email đã có người sử dụng']);
+            ->maxLength('email', 191, MAXLENGTH_USER_EMAIL)
+            ->notEmpty('email', REQUIRED_USER_EMAIL)
+            ->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => UNIQUE_USER_EMAIL]);
 
         $validator
             ->scalar('password')
-            ->maxLength('password', 191, 'Mật khẩu tối đa 191 kí tự')
-            ->minLength('password', 8, 'Mật khẩu ít nhất 8 kí tự')
+            ->maxLength('password', 191, MAXLENGTH_USER_PASSWORD)
+            ->minLength('password', 8, MINLENGTH_USER_PASSWORD)
             ->requirePresence('password', 'create')
-            ->notEmpty('password', 'Mật khẩu không được bỏ trống');
+            ->notEmpty('password', REQUIRED_USER_PASSWORD);
 
         $validator
-            ->maxLength('re-password', 191, 'Mật khẩu tối đa 191 kí tự')
+            ->maxLength('re-password', 191, MAXLENGTH_USER_RE_PASSWORD)
             ->requirePresence('re-password', 'create')
-            ->notEmpty('re-password', 'Nhập lại mật khẩu không được bỏ trống')
-            ->minLength('re-password', 8, 'Mật khẩu ít nhất 8 kí tự')
+            ->notEmpty('re-password', REQUIRED_USER_RE_PASSWORD)
+            ->minLength('re-password', 8, MINLENGTH_USER_RE_PASSWORD)
             ->add(
                 're-password',
                 'custom',
@@ -89,22 +89,22 @@ class UsersTable extends Table
                         }
                         return false;
                     },
-                    'message' => 'Mật khẩu và xác nhận mật khẩu không khớp'
+                    'message' => ADD_USER_RE_PASSWORD
                 )
             );
 
         $validator
             ->scalar('phonenumber')
-            ->maxLength('phonenumber', 191, 'Số điện thoại tối đa 191 kí tự')
+            ->maxLength('phonenumber', 191, MAXLENGTH_USER_PHONENUMBER)
             ->requirePresence('phonenumber', 'create')
-            ->notEmpty('phonenumber', 'Số điện thoại không được bỏ trống')
-            ->numeric('phonenumber', 'Số điện thoại phải là số');
+            ->notEmpty('phonenumber', REQUIRED_USER_PHONENUMBER)
+            ->numeric('phonenumber', NUMBER_USER_PHONENUMBER);
 
         $validator
             ->scalar('address')
-            ->maxLength('address', 191, 'Địa chỉ tối đa 191 kí tự')
+            ->maxLength('address', 191, MAXLENGTH_USER_ADDRESS)
             ->requirePresence('address', 'create')
-            ->notEmpty('address', 'Địa chỉ không được bỏ trống');
+            ->notEmpty('address', REQUIRED_USER_ADDRESS);
 
         $validator
             ->scalar('remember_token')

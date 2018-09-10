@@ -50,17 +50,17 @@ class CategoryTable extends Table
 
         $validator
             ->scalar('category_name')
-            ->maxLength('category_name', 191, 'Tên chuyên mục tối đa 191 kí tự')
+            ->maxLength('category_name', 191, MAXLENGTH_CATEGORY_NAME)
             ->requirePresence('category_name', 'create')
-            ->notEmpty('category_name', 'Tên chuyên mục không được bỏ trống')
-            ->add('category_name', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên chuyên mục đã có']);
+            ->notEmpty('category_name', REQUIRED_CATEGORY_NAME)
+            ->add('category_name', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => UNIQUE_CATEGORY_NAME]);
         
         $validator
             ->scalar('category_slug')
-            ->maxLength('category_slug', 191)
+            ->maxLength('category_slug', 191, MAXLENGTH_CATEGORY_SLUG)
             ->requirePresence('category_slug', 'create')
-            ->notEmpty('category_slug', 'Đường dẫn chuyên mục không được bỏ trống')
-            ->add('category_slug', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Trùng đường dẫn']);
+            ->notEmpty('category_slug', REQUIRED_CATEGORY_SLUG)
+            ->add('category_slug', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => UNIQUE_CATEGORY_SLUG]);
 
         $validator
             ->dateTime('created_at')

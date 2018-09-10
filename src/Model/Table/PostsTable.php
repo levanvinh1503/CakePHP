@@ -50,32 +50,32 @@ class PostsTable extends Table
 
         $validator
             ->scalar('post_title')
-            ->maxLength('post_title', 191, 'Tên bài viết tối đa 191 kí tự')
+            ->maxLength('post_title', 191, MAXLENGTH_POST_TITLE)
             ->requirePresence('post_title', 'create')
-            ->notEmpty('post_title', 'Tên bài viết không được bỏ trống')
-            ->add('post_title', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên bài viết đã có']);
+            ->notEmpty('post_title', REQUIRED_POST_TITLE)
+            ->add('post_title', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => UNIQUE_POST_TITLE]);
 
         $validator
             ->scalar('post_slug')
-            ->maxLength('post_slug', 191, 'Đường dẫn của bài viết tối đa 191 kí tự')
+            ->maxLength('post_slug', 191, MAXLENGTH_POST_SLUG)
             ->requirePresence('post_slug', 'create')
-            ->notEmpty('post_slug', 'Đường dẫn của bài viết không được bỏ trống')
-            ->add('post_slug', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Trùng đường dẫn bài viết']);
+            ->notEmpty('post_slug', REQUIRED_POST_SLUG)
+            ->add('post_slug', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => UNIQUE_POST_SLUG]);
         $validator
             ->scalar('post_description')
-            ->maxLength('post_description', 16777215, 'Mô tả ngắn quá dài')
+            ->maxLength('post_description', 16777215, MAXLENGTH_POST_DESCRIPTION)
             ->requirePresence('post_description', 'create')
-            ->notEmpty('post_description', 'Mô tả ngắn của bài viết không được bỏ trống');
+            ->notEmpty('post_description', REQUIRED_POST_DESCRIPTION);
 
 
         $validator
             ->scalar('post_content')
             ->requirePresence('post_content', 'create')
-            ->notEmpty('post_content', 'Nội dung bài viết không được bỏ trống');
+            ->notEmpty('post_content', REQUIRED_POST_CONTENT);
 
         $validator
             ->requirePresence('post_image', 'create')
-            ->notEmpty('post_image', 'Ảnh đại diện của bài viết không được bỏ trống');
+            ->notEmpty('post_image', REQUIRED_POST_IMAGE);
 
         return $validator;
     }

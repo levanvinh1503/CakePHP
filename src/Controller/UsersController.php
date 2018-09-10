@@ -16,6 +16,11 @@ use Cake\ORM\Query;
  */
 class UsersController extends AppController
 {
+    public function initialize()
+    {
+        parent::initialize();
+        $this->loadComponent('FunctionLb');
+    }
     /**
      * Register user
      * 
@@ -23,16 +28,21 @@ class UsersController extends AppController
      */
     public function register()
     {
-        $this->set('title', 'Đăng ký');
+        //Use layout Layout/login.ctp
         $this->viewBuilder()->setLayout('login');
+        //Load model Users
         $this->loadModel('Users');
-        $dateNow = Time::now();
-        $dateCreate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
+
+        //Get the current time and format datetime
+        $dateCreate = $this->FunctionLb->getCurrentTime();
+        //Create a new user entity
         $newUser = $this->Users->newEntity();
+
         if ($this->request->is('post')) {
             $messageValidation = '';
             //Validate form data
             $checkValidation = $this->Users->newEntity($this->request->getData());
+            //Show message validation
             foreach ($checkValidation->errors() as $keyArray => $itemArray) {
                 foreach ($itemArray as $keyMessage => $valuekeyMessage) {
                     if (!empty($messageValidation)) {
@@ -41,19 +51,32 @@ class UsersController extends AppController
                     $messageValidation .= $valuekeyMessage;
                 }
             }
+
+            //
             if (empty($messageValidation)) {
+                //Get data
                 $reqData = $this->request->getData();
+
+                //Set the creation and update date of the entity
                 $reqData['created_at'] = $dateCreate;
                 $reqData['updated_at'] = $dateCreate;
+
+                //Merges the passed data
                 $dataUser = $this->Users->patchEntity($newUser, $reqData);
+
+                //Add a new user entity
                 if ($this->Users->save($dataUser)) {
-                    $this->Flash->success('Đăng ký thành công', [
+                    //Set messages success
+                    $this->Flash->success(MS_REGISTER_SUCCESS, [
                         'key' => 'register',
                         'params' => []
                     ]);
+
+                    //Redirect Users/register.ctp
                     return $this->redirect(['controller' => 'Users', 'action' => 'register']);
                 }
             } else {
+                //Set messages errors validate
                 $this->Flash->error($messageValidation, [
                     'key' => 'register',
                     'params' => ['escape' => false]
@@ -69,19 +92,17 @@ class UsersController extends AppController
      */
     public function login()
     {
-        $this->set('title', 'Đăng nhập');
+        //Use layout Layout/login.ctp
         $this->viewBuilder()->setLayout('login');
         if ($this->request->is('post')) {
             $user = $this->Auth->identify();
             if ($user) {
                 $this->Auth->setUser($user);
-                $idUser = $this->Auth->user('id');
-                $userInfo = $this->Users->get($idUser);
-                $userName = $userInfo['full_name'];
                 $this->set(compact('userName'));
+
                 return $this->redirect(['controller' => 'Users', 'action' => 'dashBoard']);
             } else {
-                $this->Flash->error('Sai tên đăng nhập hoặc mật khẩu, Vui lòng thử lại !', [
+                $this->Flash->error(MS_LOGIN_ERR, [
                     'key' => 'login',
                     'params' => []
                 ]);
@@ -106,12 +127,16 @@ class UsersController extends AppController
      */
     public function dashBoard()
     {
-        $this->set('title', 'Dash Board');
+        //Use layout Layout/dashboard.ctp
         $this->viewBuilder()->setLayout('dashboard');
+        //Load model Category
         $categoryModel = $this->loadModel('Category');
         $countCategory = $categoryModel->find()->count();
+        //Load model Posts
         $postModel = $this->loadModel('Posts');
         $countPost = $postModel->find()->count();
+
+        //Set data to view
         $this->set(compact('countPost', 'countCategory'));
     }
 
@@ -122,18 +147,21 @@ class UsersController extends AppController
      */
     public function listCategory()
     {
-        $this->set('title', 'Danh sách chuyên mục');
+        //Use layout Layout/dashboard.ctp
         $this->viewBuilder()->setLayout('dashboard');
+        //Load model Category
         $this->loadModel('Category');
-        $keySearch = trim($this->request->getQuery('search'), '%');
         //Get the keyword "search"
+        $keySearch = trim($this->request->getQuery('search'), '%');
+        //Set keyword
         $keyWord = '%' . $keySearch . '%';
-
+        //Get, set keyword submit form search
         if ($this->request->is(['post'])) {
             $keySearch = $this->request->getData('search');
             $keyWord = '%' . $keySearch . '%';
         }
 
+        //Search by keyword
         $arrayCategory = $this->paginate($this->Category->find()->where([
             'OR' => [
                 'category_name LIKE' => $keyWord,
@@ -144,10 +172,13 @@ class UsersController extends AppController
             'contain' => ['Posts']
         ]);
 
+        //Redirect page with keyword
         if ($this->request->is(['post'])) {
             $this->redirect(['controller' => 'Users', 'action' => 'listCategory', 'search' => $keyWord]);
             $this->set(compact('arrayCategory'));
         }
+
+        //Set data to view
         $this->set(compact('arrayCategory', 'keySearch'));
     }
 
@@ -158,18 +189,21 @@ class UsersController extends AppController
      */
     public function listPost()
     {
-        $this->set('title', 'Danh sách bài viết');
+        //Use layout Layout/dashboard;
         $this->viewBuilder()->setLayout('dashboard');
+        //Load model Posts
         $this->loadModel('Posts');
+        //Cut the % character in the keyword
         $keySearch = trim($this->request->getQuery('search'), '%');
         //Get the keyword "search"
         $keyWord = '%' . $keySearch . '%';
-        //get keyword submit form
+        //Get, set keyword submit form search
         if ($this->request->is(['post'])) {
             $keySearch = $this->request->getData('search');
             $keyWord = '%' . $keySearch . '%';
         }
 
+        //Search by keyword
         $arrayPost = $this->paginate($this->Posts->find()->where([
             'OR' => [
                 'Category.category_name LIKE' => $keyWord,
@@ -180,11 +214,13 @@ class UsersController extends AppController
             'contain' => ['Category']
         ]);
 
+        //Redirect page with keyword
         if ($this->request->is(['post'])) {
             $this->redirect(['controller' => 'Users', 'action' => 'listPost', 'search' => $keyWord]);
             $this->set(compact('arrayPost'));
         }
 
+        //Set data to view
         $this->set(compact('arrayPost', 'keySearch'));
     }
 
@@ -195,17 +231,20 @@ class UsersController extends AppController
      */
     public function addCategory()
     {
-        $this->set('title', 'Thêm chuyên mục');
+        //Use layout Layout/dashboard.ctp
         $this->viewBuilder()->setLayout('dashboard');
-        $dateNow = Time::now();
-        $dateCreate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        //Get the current time and Format datetime
+        $dateCreate = $this->FunctionLb->getCurrentTime();
+        //Load model Category
         $categoryModel = $this->loadModel('Category');
+        //Create a new Entity
         $newCategory = $categoryModel->newEntity();
         if ($this->request->is('post')) {
             //validator
             $messageValidation = '';
             //Validate form data
             $checkValidation = $categoryModel->newEntity($this->request->getData());
+            //Show message
             foreach ($checkValidation->errors() as $keyArray => $itemArray) {
                 foreach ($itemArray as $keyMessage => $valuekeyMessage) {
                     if (!empty($messageValidation)) {
@@ -215,36 +254,44 @@ class UsersController extends AppController
                 }
             }
 
-            //insert category
+            //Add a new category
             if (empty($messageValidation)) {
+                //Get data
                 $reqData = $this->request->getData();
+                //Set the creation and update date of the entity
                 $reqData['created_at'] = $dateCreate;
                 $reqData['updated_at'] = $dateCreate;
-                $strCateName = htmlentities($this->request->getData('category_name'), ENT_COMPAT, 'UTF-8');
-                $strCateSlug= htmlentities($this->request->getData('category_slug'), ENT_COMPAT, 'UTF-8');
-                $reqData['category_name'] = htmlentities($strCateName, ENT_COMPAT, 'UTF-8');
-                $reqData['category_slug'] = htmlentities($strCateSlug, ENT_COMPAT, 'UTF-8');
-
+                //Converts characters to HTML entities
+                $reqData['category_name'] = $this->FunctionLb->convertEntity($this->request->getData('category_name'));
+                $reqData['category_slug'] = $this->FunctionLb->convertEntity($this->request->getData('category_slug'));
+                //Merges the passed data
                 $dataCategory = $this->Category->patchEntity($newCategory, $reqData);
+                //Add a new category
                 if ($categoryModel->save($dataCategory)) {
-                    $this->Flash->success('Thêm chuyên mục thành công', [
+                    //Set message success
+                    $this->Flash->success(MS_ADD_CATEGORY_SUCCESS, [
                         'key' => 'add-category',
                         'params' => []
                     ]);
+
                     return $this->redirect(['controller' => 'Users', 'action' => 'addCategory']);
                 } else {
-                    $this->Flash->error('Thêm chuyên mục thất bại, vui lòng thử lại !', [
+                    //Set message errors
+                    $this->Flash->error(MS_ADD_CATEGORY_ERR, [
                         'key' => 'add-category',
                         'params' => []
                     ]);
                 }
             } else {
+                //Set message errors validate
                 $this->Flash->error($messageValidation, [
                     'key' => 'add-category',
                     'params' => ['escape' => false]
                 ]);
             }
         }
+
+        //Set data to view
         $this->set(compact('errorsValidator'));
     }
 
@@ -255,10 +302,10 @@ class UsersController extends AppController
      */
     public function addPost()
     {
-        $this->set('title', 'Thêm bài viết');
+        //Use layout Layout/dashboard.ctp
         $this->viewBuilder()->setLayout('dashboard');
-        $dateNow = Time::now();
-        $dateCreate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        //Get the current time and Format time
+        $dateCreate = $this->FunctionLb->getCurrentTime();
         $categoryModel = $this->loadModel('Category')->find();
         $postModel = $this->loadModel('Posts');
         $newPost = $postModel->newEntity();
@@ -275,43 +322,52 @@ class UsersController extends AppController
                     $messageValidation .= $valuekeyMessage;
                 }
             }
-            //insert post
+            //Add a new post
             if (empty($messageValidation)) {
+                //Get data
                 $reqData = $this->request->getData();
+                //Set the creation and update date of the entity
                 $reqData['created_at'] = $dateCreate;
                 $reqData['updated_at'] = $dateCreate;
+
+                //Get image
                 $fileName = $this->request->getData('post_image');
                 $filePath = WWW_ROOT . 'img\\' . $fileName['name'];
+
+                //Move image to webroot/img
                 move_uploaded_file($fileName['tmp_name'], $filePath);
+
                 $reqData['post_image'] = $fileName['name'];
-
-                $strPostTitle = htmlentities($this->request->getData('post_title'), ENT_COMPAT, 'UTF-8');
-                $strPostSlug= htmlentities($this->request->getData('post_slug'), ENT_COMPAT, 'UTF-8');
-                $strPostDescription= htmlentities($this->request->getData('post_description'), ENT_COMPAT, 'UTF-8');
-
-                $reqData['post_title'] = htmlentities($strPostTitle, ENT_COMPAT, 'UTF-8');
-                $reqData['post_slug'] = htmlentities($strPostSlug, ENT_COMPAT, 'UTF-8');
-                $reqData['post_description'] = htmlentities($strPostDescription, ENT_COMPAT, 'UTF-8');
-
+                //Converts characters to HTML entities
+                $reqData['post_title'] = $this->FunctionLb->convertEntity($this->request->getData('post_title'));
+                $reqData['post_slug'] = $this->FunctionLb->convertEntity($this->request->getData('post_slug'));
+                $reqData['post_description'] = $this->FunctionLb->convertEntity($this->request->getData('post_description'));
+                //Merges the passed data
                 $datePost = $this->Posts->patchEntity($newPost, $reqData);
+                //Add a new post
                 if ($postModel->save($datePost)) {
-                    $this->Flash->success('Thêm bài viết thành công', [
+                    //Set message success
+                    $this->Flash->success(MS_ADD_POST_SUCCESS, [
                         'key' => 'add-post',
                         'params' => []
                     ]);
                     return $this->redirect(['controller' => 'Users', 'action' => 'addPost']);
+                } else {
+                    //Set message error
+                    $this->Flash->error(MS_ADD_POST_ERR, [
+                        'key' => 'add-post',
+                        'params' => []
+                    ]);
                 }
-                $this->Flash->error('Thêm bài viết thất bại. Vui lòng thử lại !', [
-                    'key' => 'add-post',
-                    'params' => []
-                ]);
             } else {
+                //Set message errors
                 $this->Flash->error($messageValidation, [
                     'key' => 'add-post',
                     'params' => ['escape' => false]
                 ]);
             }
         }
+        //Set data to view
         $this->set(compact('categoryModel', 'errorsValidator'));
     }
 
@@ -324,24 +380,29 @@ class UsersController extends AppController
      */
     public function editCategory($id = null)
     {
-        $this->set('title', 'Chỉnh sửa chuyên mục');
+        //Use layout Layout/dashboard
         $this->viewBuilder()->setLayout('dashboard');
-        $dateNow = Time::now();
-        $dateUpdate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        //Get the current time and format datetime
+        $dateUpdate = $this->FunctionLb->getCurrentTime();
+        //Load model Category
         $this->loadModel('Category');
+        //Get data with id = $id
         $editCategory = $this->Category->get($id, [
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-
-            //update category
+            //Get data
             $arrayCategory = $this->request->getData();
             $arrayCategory['updated_at'] = $dateUpdate;
-
+            //Converts characters to HTML entities
+            $arrayCategory['category_name'] = $this->FunctionLb->convertEntity($this->request->getData('category_name'));
+            $arrayCategory['category_slug'] = $this->FunctionLb->convertEntity($this->request->getData('category_slug'));
+            //Merges the passed data
             $categoryData = $this->Category->patchEntity($editCategory, $arrayCategory);
-
+            //Update a category
             if ($this->Category->save($categoryData)) {
-                $this->Flash->success('Sửa chuyên mục thành công', [
+                //Set message success
+                $this->Flash->success(MS_EDIT_CATEGORY_SUCCESS, [
                     'key' => 'edit-category',
                     'params' => []
                 ]);
@@ -359,14 +420,14 @@ class UsersController extends AppController
                         $messageValidation .= $valuekeyMessage;
                     }
                 }
-
+                //Set message errors
                 $this->Flash->error($messageValidation, [
                     'key' => 'edit-category',
                     'params' => ['escape' => false]
                 ]);
             }
         }
-
+        //Set data to view
         $this->set(compact('editCategory', 'errorsValidator'));
     }
 
@@ -379,26 +440,43 @@ class UsersController extends AppController
      */
     public function editPost($id = null)
     {
-        $this->set('title', 'Chỉnh sửa bài viết');
+        //Use layout Layout/dashboard
         $this->viewBuilder()->setLayout('dashboard');
-        $dateNow = Time::now();
-        $dateUpdate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        //Get the current time and format datetime
+        $dateUpdate = $this->FunctionLb->getCurrentTime();
+        //Load model Category
+        $this->loadModel('Category');
+        $listCategory = $this->Category->find();
+        //Load model Posts
         $this->loadModel('Posts');
+        //Get data with id = $id
         $editPost = $this->Posts->get($id, [
             'contain' => []
         ]);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
+            //Get data from form
             $arrayPost = $this->request->getData();
+            //Set the creation and update date of the entity
             $arrayPost['updated_at'] = $dateUpdate;
+            //Converts characters to HTML entities
+            $arrayPost['post_title'] = $this->FunctionLb->convertEntity($this->request->getData('post_title'));
+            $arrayPost['post_slug'] = $this->FunctionLb->convertEntity($this->request->getData('post_slug'));
+            $arrayPost['post_description'] = $this->FunctionLb->convertEntity($this->request->getData('post_description'));
             $fileName = $this->request->getData('post-image');
+            //Check upload file
             if (!empty($fileName['name'])) {
                 $filePath = WWW_ROOT . 'img\\' . $fileName['name'];
+                //Move image to webroot/img
                 move_uploaded_file($fileName['tmp_name'], $filePath);
                 $arrayPost['post_image'] = $fileName['name'];
             }
+            //Merges the passed data
             $postData = $this->Posts->patchEntity($editPost, $arrayPost);
+            //Update a post
             if ($this->Posts->save($postData)) {
-                $this->Flash->success('Sửa bài viết thành công', [
+                //Set message success
+                $this->Flash->success(MS_EDIT_POST_SUCCESS, [
                     'key' => 'edit-post',
                     'params' => []
                 ]);
@@ -416,15 +494,15 @@ class UsersController extends AppController
                         $messageValidation .= $valuekeyMessage;
                     }
                 }
+                //Set message errors
                 $this->Flash->success($messageValidation, [
                     'key' => 'edit-post',
                     'params' => ['escape' => false]
                 ]);
             }
         }
-        
-        $this->loadModel('Category');
-        $listCategory = $this->Category->find();
+
+        //Set data to view
         $this->set(compact('editPost', 'listCategory', 'errorsValidator'));
     }
 
@@ -436,17 +514,24 @@ class UsersController extends AppController
      */
     public function deleteCategory()
     {
+        //Check the method post or delte
         $this->request->allowMethod(['post', 'delete']);
+        //Get id category
         $idCategory = $this->request->getData('category-id');
+        //Load model Category
         $this->loadModel('Category');
+        //Get data with id = $idCategory
         $deleteCategory = $this->Category->get($idCategory);
+        //Delete a category
         if ($this->Category->delete($deleteCategory)) {
-            $this->Flash->success('Xóa chuyên mục thành công', [
+            //Set message success
+            $this->Flash->success(MS_DELETE_CATEGORY_SUCCESS, [
                 'key' => 'delete-category',
                 'params' => []
             ]);
         } else {
-            $this->Flash->error('Xóa chuyên mục thất bại. Vui lòng thử lại !', [
+            //Set message error
+            $this->Flash->error(MS_DELETE_CATEGORY_ERR, [
                 'key' => 'delete-category',
                 'params' => []
             ]);
@@ -464,17 +549,24 @@ class UsersController extends AppController
      */
     public function deletePost()
     {
+        //Check the method post or delte
         $this->request->allowMethod(['post', 'delete']);
+        //Get id post
         $idPost = $this->request->getData('post-id');
+        //Load model posts
         $this->loadModel('Posts');
+        //Get data with id = $idPost
         $deletePost = $this->Posts->get($idPost);
+        //Delete post
         if ($this->Posts->delete($deletePost)) {
-            $this->Flash->success('Xóa bài viết thành công', [
+            //Set message success
+            $this->Flash->success(MS_DELETE_POST_SUCCESS, [
                 'key' => 'delete-post',
                 'params' => []
             ]);
         } else {
-            $this->Flash->error('Xóa bài viết thất bại, vui lòng thử lại !', [
+            //Set message error
+            $this->Flash->error(MS_DELETE_POST_ERR, [
                 'key' => 'delete-post',
                 'params' => []
             ]);
