@@ -83,3 +83,91 @@ define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'vendor' . DS . 'cakephp' . DS . 'c
  */
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
+
+/**
+ * Format 
+ */
+define('DATE_TIME', 'yyyy-MM-dd HH:mm:ss');
+
+/**
+ * Message function
+ */
+define('MS_ADD_POST_SUCCESS', 'Thêm bài viết thành công');
+define('MS_ADD_POST_ERR', 'Thêm bài viết thất bại');
+
+define('MS_ADD_CATEGORY_SUCCESS', 'Thêm chuyên mục thành công');
+define('MS_ADD_CATEGORY_ERR', 'Thêm chuyên mục thất bại');
+
+define('MS_REGISTER_SUCCESS', 'Đăng ký thành công');
+define('MS_REGISTER_ERR', 'Thêm chuyên mục thành công');
+
+define('MS_EDIT_POST_SUCCESS', 'Sửa bài viết thành công');
+
+define('MS_EDIT_CATEGORY_SUCCESS', 'Sửa chuyên mục thành công');
+
+define('MS_DELETE_POST_SUCCESS', 'Xóa bài viết thành công');
+define('MS_DELETE_POST_ERR', 'Xóa bài viết thất bại, vui lòng kiểm tra lại');
+
+define('MS_DELETE_CATEGORY_SUCCESS', 'Xóa chuyên mục thành công');
+define('MS_DELETE_CATEGORY_ERR', 'Xóa chuyên mục thất bại, vui lòng kiểm tra lại');
+
+define('MS_LOGIN_ERR', 'Sai tên đăng nhập hoặc mật khẩu, Vui lòng thử lại !');
+
+/**
+ * Message validate of Category
+ */
+define('MAXLENGTH_CATEGORY_NAME', 'Tên chuyên mục tối đa 191 kí tự');
+define('REQUIRED_CATEGORY_NAME', 'Tên chuyên mục không được bỏ trống');
+define('UNIQUE_CATEGORY_NAME', 'Tên chuyên mục đã có');
+
+define('MAXLENGTH_CATEGORY_SLUG', 'Đường dẫn chuyên mục tối đa 191 kí tự');
+define('REQUIRED_CATEGORY_SLUG', 'Đường dẫn chuyên mục không được bỏ trống');
+define('UNIQUE_CATEGORY_SLUG', 'Trùng đường dẫn');
+
+/**
+ * Message validate of Posts
+ */
+define('MAXLENGTH_POST_TITLE', 'Tên bài viết tối đa 191 kí tự');
+define('REQUIRED_POST_TITLE', 'Tên bài viết không được bỏ trống');
+define('UNIQUE_POST_TITLE', 'Tên bài viết đã có');
+
+define('MAXLENGTH_POST_SLUG', 'Đường dẫn của bài viết tối đa 191 kí tự');
+define('REQUIRED_POST_SLUG', 'Đường dẫn của bài viết không được bỏ trống');
+define('UNIQUE_POST_SLUG', 'Trùng đường dẫn bài viết');
+
+define('MAXLENGTH_POST_DESCRIPTION', 'Mô tả ngắn quá dài');
+define('REQUIRED_POST_DESCRIPTION', 'Mô tả ngắn của bài viết không được bỏ trống');
+
+define('REQUIRED_POST_CONTENT', 'Nội dung bài viết không được bỏ trống');
+
+define('REQUIRED_POST_IMAGE', 'Ảnh đại diện của bài viết không được bỏ trống');
+
+/**
+ * Message validate of Users
+ */
+define('MAXLENGTH_USER_USERNAME', 'Tên đăng nhập tối đa 191 kí tự');
+define('REQUIRED_USER_USERNAME', 'Tên đăng nhập không được bỏ trống');
+define('UNIQUE_USER_USERNAME', 'Tên đăng nhập đã có người sử dụng');
+
+define('MAXLENGTH_USER_FULLNAME', 'Họ tên tối đa 191 kí tự');
+define('REQUIRED_USER_FULLNAME', 'Họ tên không được bỏ trống');
+
+define('MAXLENGTH_USER_EMAIL', 'Email tối đa 191 kí tự');
+define('REQUIRED_USER_EMAIL', 'Email không được bỏ trống');
+define('UNIQUE_USER_EMAIL', 'Email đã có người sử dụng');
+
+define('MAXLENGTH_USER_PASSWORD', 'Mật khẩu tối đa 191 kí tự');
+define('REQUIRED_USER_PASSWORD', 'Mật khẩu không được bỏ trống');
+define('MINLENGTH_USER_PASSWORD', 'Mật khẩu ít nhất 8 kí tự');
+
+define('MAXLENGTH_USER_RE_PASSWORD', 'Mật khẩu tối đa 191 kí tự');
+define('REQUIRED_USER_RE_PASSWORD', 'Nhập lại mật khẩu không được bỏ trống');
+define('MINLENGTH_USER_RE_PASSWORD', 'Mật khẩu ít nhất 8 kí tự');
+define('ADD_USER_RE_PASSWORD', 'Mật khẩu và xác nhận mật khẩu không khớp');
+
+define('MAXLENGTH_USER_PHONENUMBER', 'Số điện thoại tối đa 191 kí tự');
+define('REQUIRED_USER_PHONENUMBER', 'Số điện thoại không được bỏ trống');
+define('NUMBER_USER_PHONENUMBER', 'Số điện thoại phải là số');
+
+define('MAXLENGTH_USER_ADDRESS', 'Địa chỉ tối đa 191 kí tự');
+define('REQUIRED_USER_ADDRESS', 'Địa chỉ không được bỏ trống');
