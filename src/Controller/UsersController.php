@@ -125,14 +125,13 @@ class UsersController extends AppController
         $this->set('title', 'Danh sách chuyên mục');
         $this->viewBuilder()->setLayout('dashboard');
         $this->loadModel('Category');
-        $keyWord = '%' . $this->request->getQuery('search') . '%';
+        $keySearch = trim($this->request->getQuery('search'), '%');
+        //Get the keyword "search"
+        $keyWord = '%' . $keySearch . '%';
         
         if ($this->request->is(array('post'))) {
-            $keyWord = '%' . $this->request->getData('search') . '%';
-        }
-
-        if (empty($keyWord)) {
-            $keyWord = '%%';
+            $keySearch = $this->request->getData('search');
+            $keyWord = '%' . $keySearch . '%';
         }
 
         $arrayCategory = $this->paginate($this->Category->find()->where(array(
@@ -149,7 +148,7 @@ class UsersController extends AppController
             $this->redirect(array('controller' => 'Users', 'action' => 'listCategory', 'search' => $keyWord));
             $this->set(compact('arrayCategory'));
         }
-        $this->set(compact('arrayCategory'));
+        $this->set(compact('arrayCategory', 'keySearch'));
     }
 
     /**
@@ -162,15 +161,13 @@ class UsersController extends AppController
         $this->set('title', 'Danh sách bài viết');
         $this->viewBuilder()->setLayout('dashboard');
         $this->loadModel('Posts');
+        $keySearch = trim($this->request->getQuery('search'), '%');
         //Get the keyword "search"
-        $keyWord = '%' . $this->request->getQuery('search') . '%';
+        $keyWord = '%' . $keySearch . '%';
         //get keyword submit form
         if ($this->request->is(array('post'))) {
-            $keyWord = '%' . $this->request->getData('search') . '%';
-        }
-        //define keyword
-        if (empty($keyWord)) {
-            $keyWord = '%%';
+            $keySearch = $this->request->getData('search');
+            $keyWord = '%' . $keySearch . '%';
         }
 
         $arrayPost = $this->paginate($this->Posts->find()->where(array(
@@ -188,7 +185,7 @@ class UsersController extends AppController
             $this->set(compact('arrayPost'));
         }
 
-        $this->set(compact('arrayPost'));
+        $this->set(compact('arrayPost', 'keySearch'));
     }
 
     /**

@@ -4,7 +4,7 @@
     <!-- DataTable -->
     <div class="search-block">
         <?= $this->Form->create('search', array('id' => 'form-search', 'url' => array('controller' => 'Users', 'action' => 'listPost')));?>
-        <?= $this->Form->input('search')?>
+        <?= $this->Form->input('search', array('value' => $keySearch))?>
         <?= $this->Form->button('<i class="fa fa-search"></i>', array('class' => 'btn-search', 'escape' => false))?>
         <?= $this->Form->end()?>
     </div>
