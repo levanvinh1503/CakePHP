@@ -21,16 +21,14 @@
         <?= $this->fetch('title') ?>
     </title>
     <?= $this->Html->meta('icon') ?>
-
-    <?= $this->Html->css('base.css') ?>
-    <?= $this->Html->css('style.css') ?>
+    <?= $this->Html->css('bootstrap.min.css') ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
 <body>
-    <div id="container">
+    <div class="container" id="container">
         <div id="header">
             <h1><?= __('Error') ?></h1>
         </div>
@@ -40,7 +38,9 @@
             <?= $this->fetch('content') ?>
         </div>
         <div id="footer">
-            <?= $this->Html->link(__('Back'), 'javascript:history.back()') ?>
+            <?= $this->Html->link(__('Back'), 'javascript:history.back()', [
+                'class' => 'btn btn-default',
+            ]) ?>
         </div>
     </div>
 </body>
