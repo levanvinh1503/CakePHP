@@ -2,15 +2,15 @@
     <h2 class="title-dashborad">Sửa chuyên mục</h2>
     <?= $this->Flash->render('edit-category');?>
     <!-- Form edit Category -->
-    <?= $this->Form->create('', array('id' => 'form-add-category'));?>
+    <?= $this->Form->create('', ['id' => 'form-add-category']);?>
     <div class="form-group">
-        <?= $this->Form->input('category_name', array('label' => 'Tên chuyên mục', 'class' => 'form-control', 'value' => $editCategory->category_name));?>
+        <?= $this->Form->input('category_name', ['label' => 'Tên chuyên mục', 'class' => 'form-control', 'value' => $editCategory->category_name]);?>
     </div>
     <div class="form-group">
-        <?= $this->Form->input('category_slug', array('label' => 'Đường dẫn', 'class' => 'form-control', 'value' => $editCategory->category_slug));?>
+        <?= $this->Form->input('category_slug', ['label' => 'Đường dẫn', 'class' => 'form-control', 'value' => $editCategory->category_slug]);?>
     </div>
     <div class="form-group">
-        <?= $this->Form->input('Chỉnh sửa', array('class' => 'btn btn-primary', 'type' => 'submit', 'name' => 'edit-post'));?>
+        <?= $this->Form->input('Chỉnh sửa', ['class' => 'btn btn-primary', 'type' => 'submit', 'name' => 'edit-post']);?>
     </div>
     <!-- End Form edit Category -->
 </div>

@@ -52,7 +52,7 @@ class UsersTable extends Table
             ->maxLength('username', 191, 'Tên đăng nhập tối đa 191 kí tự')
             ->requirePresence('username', 'create')
             ->notEmpty('username', 'Tên đăng nhập không được bỏ trống')
-            ->add('username', 'unique', array('rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên đăng nhập đã có người sử dụng'));
+            ->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên đăng nhập đã có người sử dụng']);
 
         $validator
             ->scalar('full_name')
@@ -65,7 +65,7 @@ class UsersTable extends Table
             ->requirePresence('email', 'create')
             ->maxLength('email', 191, 'Email tối đa 191 kí tự')
             ->notEmpty('email', 'Email không được bỏ trống')
-            ->add('email', 'unique', array('rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Email đã có người sử dụng'));
+            ->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Email đã có người sử dụng']);
 
         $validator
             ->scalar('password')

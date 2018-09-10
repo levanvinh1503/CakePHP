@@ -2,13 +2,13 @@
 <?= $this->Flash->render('login')?>
 <?=$this->Form->create();?>
 <div class="form-group">
-    <?= $this->Form->input('username', array('label' => 'Tên đăng nhập', 'class' => 'form-control'));?>
+    <?= $this->Form->input('username', ['label' => 'Tên đăng nhập', 'class' => 'form-control']);?>
 </div>
 <div class="form-group">
-    <?= $this->Form->input('password', array('label' => 'Mật khẩu', 'class' => 'form-control'));?>
+    <?= $this->Form->input('password', ['label' => 'Mật khẩu', 'class' => 'form-control']);?>
 </div>
 <div class="form-group">
-    <?= $this->Form->button(__('Đăng nhập'), array('class' => 'btn btn-primary'))?>
+    <?= $this->Form->button(__('Đăng nhập'), ['class' => 'btn btn-primary'])?>
     <?= $this->Html->link('Đăng ký', [
         'controller' => 'Users',
         'action' => 'register',

@@ -3,17 +3,17 @@
     <?= $this->Flash->render('delete-category')?>
     <!-- Table Category -->
     <div class="search-block">
-        <?= $this->Form->create('search', array('id' => 'form-search', 'url' => array('controller' => 'Users', 'action' => 'listCategory')));?>
-        <?= $this->Form->input('search', array('value' => $keySearch))?>
-        <?= $this->Form->button('<i class="fa fa-search"></i>', array('class' => 'btn-search', 'escape' => false))?>
+        <?= $this->Form->create('search', ['id' => 'form-search', 'url' => ['controller' => 'Users', 'action' => 'listCategory']]);?>
+        <?= $this->Form->input('search', ['value' => $keySearch])?>
+        <?= $this->Form->button('<i class="fa fa-search"></i>', ['class' => 'btn-search', 'escape' => false])?>
         <?= $this->Form->end()?>
     </div>
     <table class="table table-striped table-bordered table-hover" id="table-list-category">
         <thead>
             <tr>
-                <th><?= $this->Paginator->sort('id', $this->Html->image('sort_both.png'), array('escape' => false))?>ID</th>
-                <th><?= $this->Paginator->sort('category_name', $this->Html->image('sort_both.png'), array('escape' => false))?>Tên chuyên mục</th>
-                <th><?= $this->Paginator->sort('category_slug', $this->Html->image('sort_both.png'), array('escape' => false))?>Đường dẫn</th>
+                <th><?= $this->Paginator->sort('id', $this->Html->image('sort_both.png'), ['escape' => false])?>ID</th>
+                <th><?= $this->Paginator->sort('category_name', $this->Html->image('sort_both.png'), ['escape' => false])?>Tên chuyên mục</th>
+                <th><?= $this->Paginator->sort('category_slug', $this->Html->image('sort_both.png'), ['escape' => false])?>Đường dẫn</th>
                 <th>Số bài viết</th>
                 <th>Hành động</th>
             </tr>
@@ -29,14 +29,14 @@
                         <td><?= h($valueCategory->category_slug) ?></td>
                         <td><?= count($valueCategory->posts)?> bài viết</td>
                         <td>
-                            <?= $this->Html->link('<i class="fa fa-edit"></i> Sửa', array(
+                            <?= $this->Html->link('<i class="fa fa-edit"></i> Sửa', [
                                 'controller' => 'Users',
                                 'action' => 'editCategory',
                                 'id' => $valueCategory->id
-                            ), array(
+                            ], [
                                 'class' => 'btn btn-primary edit-category',
                                 'escape' => false
-                            ))?>
+                            ])?>
                             <button class="btn btn-danger btn-sm btn-show-model" data-toggle="modal" data-target="#show-delete-category"><i class="fa fa-trash"></i> Xóa</button>
                         </td>
                     </tr>
@@ -57,11 +57,11 @@
             <ul class="pagination-list">
                 <?php 
                 if (!empty($this->Paginator->numbers())) {
-                    echo $this->Paginator->prev('<i class="fa fa-caret-left"></i>', array('escape' => false), null, array('class' => 'prev disabled'));
+                    echo $this->Paginator->prev('<i class="fa fa-caret-left"></i>', ['escape' => false], null, ['class' => 'prev disabled']);
                 }
                 echo $this->Paginator->numbers();
                 if (!empty($this->Paginator->numbers())) {
-                    echo $this->Paginator->next('<i class="fa fa-caret-right"></i>', array('escape' => false), null, array('class' => 'next disabled'));
+                    echo $this->Paginator->next('<i class="fa fa-caret-right"></i>', ['escape' => false], null, ['class' => 'next disabled']);
                 }
                 ?>
             </ul>
@@ -79,14 +79,14 @@
                 <h4 class="modal-title">Xóa Chuyên Mục</h4>
             </div>
             <div class="modal-body">
-                <?=$this->Form->create('', array('action' => 'deleteCategory'));?>
+                <?=$this->Form->create('', ['action' => 'deleteCategory']);?>
                 <div class="form-group">
-                    <?= $this->Form->input('category-id', array('type' => 'hidden', 'id' => 'category-id'))?>
+                    <?= $this->Form->input('category-id', ['type' => 'hidden', 'id' => 'category-id'])?>
                     <p>Bạn có chắc muốn xóa chuyên mục <strong id="category-name" style="font-weight: bold"></strong> cũng như các bài viết trong đó?</p>
                 </div>
                 <div class="form-group" style="text-align: right;">
-                    <?= $this->Form->button(__('Đóng'), array('class' => 'btn btn-default', 'type' => 'button', 'data-dismiss' => 'modal'))?>
-                    <?= $this->Form->button(__('Xóa'), array('class' => 'btn btn-danger', 'id' => 'category-delete', 'type' => 'submit'))?>
+                    <?= $this->Form->button(__('Đóng'), ['class' => 'btn btn-default', 'type' => 'button', 'data-dismiss' => 'modal'])?>
+                    <?= $this->Form->button(__('Xóa'), ['class' => 'btn btn-danger', 'id' => 'category-delete', 'type' => 'submit'])?>
                 </div>
                 <?=$this->Form->end();?>
             </div>

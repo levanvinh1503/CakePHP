@@ -47,17 +47,17 @@ class UsersController extends AppController
                 $reqData['updated_at'] = $dateCreate;
                 $dataUser = $this->Users->patchEntity($newUser, $reqData);
                 if ($this->Users->save($dataUser)) {
-                    $this->Flash->success('Đăng ký thành công', array(
+                    $this->Flash->success('Đăng ký thành công', [
                         'key' => 'register',
-                        'params' => array()
-                    ));
-                    return $this->redirect(array('controller' => 'Users', 'action' => 'register'));
+                        'params' => []
+                    ]);
+                    return $this->redirect(['controller' => 'Users', 'action' => 'register']);
                 }
             } else {
-                $this->Flash->error($messageValidation, array(
+                $this->Flash->error($messageValidation, [
                     'key' => 'register',
-                    'params' => array('escape' => false)
-                ));
+                    'params' => ['escape' => false]
+                ]);
             }
         }
     }
@@ -79,12 +79,12 @@ class UsersController extends AppController
                 $userInfo = $this->Users->get($idUser);
                 $userName = $userInfo['full_name'];
                 $this->set(compact('userName'));
-                return $this->redirect(array('controller' => 'Users', 'action' => 'dashBoard'));
+                return $this->redirect(['controller' => 'Users', 'action' => 'dashBoard']);
             } else {
-                $this->Flash->error('Sai tên đăng nhập hoặc mật khẩu, Vui lòng thử lại !', array(
+                $this->Flash->error('Sai tên đăng nhập hoặc mật khẩu, Vui lòng thử lại !', [
                     'key' => 'login',
-                    'params' => array()
-                ));
+                    'params' => []
+                ]);
             }
         }
     }
@@ -128,24 +128,24 @@ class UsersController extends AppController
         $keySearch = trim($this->request->getQuery('search'), '%');
         //Get the keyword "search"
         $keyWord = '%' . $keySearch . '%';
-        
-        if ($this->request->is(array('post'))) {
+
+        if ($this->request->is(['post'])) {
             $keySearch = $this->request->getData('search');
             $keyWord = '%' . $keySearch . '%';
         }
 
-        $arrayCategory = $this->paginate($this->Category->find()->where(array(
-            'OR' => array(
+        $arrayCategory = $this->paginate($this->Category->find()->where([
+            'OR' => [
                 'category_name LIKE' => $keyWord,
                 'category_slug LIKE' => $keyWord
-            )
-        )), array(
+            ]
+        ]), [
             'limit' => 2,
-            'contain' => array('Posts')
-        ));
+            'contain' => ['Posts']
+        ]);
 
-        if ($this->request->is(array('post'))) {
-            $this->redirect(array('controller' => 'Users', 'action' => 'listCategory', 'search' => $keyWord));
+        if ($this->request->is(['post'])) {
+            $this->redirect(['controller' => 'Users', 'action' => 'listCategory', 'search' => $keyWord]);
             $this->set(compact('arrayCategory'));
         }
         $this->set(compact('arrayCategory', 'keySearch'));
@@ -165,23 +165,23 @@ class UsersController extends AppController
         //Get the keyword "search"
         $keyWord = '%' . $keySearch . '%';
         //get keyword submit form
-        if ($this->request->is(array('post'))) {
+        if ($this->request->is(['post'])) {
             $keySearch = $this->request->getData('search');
             $keyWord = '%' . $keySearch . '%';
         }
 
-        $arrayPost = $this->paginate($this->Posts->find()->where(array(
-            'OR' => array(
+        $arrayPost = $this->paginate($this->Posts->find()->where([
+            'OR' => [
                 'Category.category_name LIKE' => $keyWord,
                 'Posts.post_title LIKE' => $keyWord
-            )
-        )), array(
+            ]
+        ]), [
             'limit' => 5,
-            'contain' => array('Category')
-        ));
+            'contain' => ['Category']
+        ]);
 
-        if ($this->request->is(array('post'))) {
-            $this->redirect(array('controller' => 'Users', 'action' => 'listPost', 'search' => $keyWord));
+        if ($this->request->is(['post'])) {
+            $this->redirect(['controller' => 'Users', 'action' => 'listPost', 'search' => $keyWord]);
             $this->set(compact('arrayPost'));
         }
 
@@ -227,22 +227,22 @@ class UsersController extends AppController
 
                 $dataCategory = $this->Category->patchEntity($newCategory, $reqData);
                 if ($categoryModel->save($dataCategory)) {
-                    $this->Flash->success('Thêm chuyên mục thành công', array(
+                    $this->Flash->success('Thêm chuyên mục thành công', [
                         'key' => 'add-category',
-                        'params' => array()
-                    ));
-                    return $this->redirect(array('controller' => 'Users', 'action' => 'addCategory'));
+                        'params' => []
+                    ]);
+                    return $this->redirect(['controller' => 'Users', 'action' => 'addCategory']);
                 } else {
-                    $this->Flash->error('Thêm chuyên mục thất bại, vui lòng thử lại !', array(
+                    $this->Flash->error('Thêm chuyên mục thất bại, vui lòng thử lại !', [
                         'key' => 'add-category',
-                        'params' => array()
-                    ));
+                        'params' => []
+                    ]);
                 }
             } else {
-                $this->Flash->error($messageValidation, array(
+                $this->Flash->error($messageValidation, [
                     'key' => 'add-category',
-                    'params' => array('escape' => false)
-                ));
+                    'params' => ['escape' => false]
+                ]);
             }
         }
         $this->set(compact('errorsValidator'));
@@ -295,21 +295,21 @@ class UsersController extends AppController
 
                 $datePost = $this->Posts->patchEntity($newPost, $reqData);
                 if ($postModel->save($datePost)) {
-                    $this->Flash->success('Thêm bài viết thành công', array(
+                    $this->Flash->success('Thêm bài viết thành công', [
                         'key' => 'add-post',
-                        'params' => array()
-                    ));
-                    return $this->redirect(array('controller' => 'Users', 'action' => 'addPost'));
+                        'params' => []
+                    ]);
+                    return $this->redirect(['controller' => 'Users', 'action' => 'addPost']);
                 }
-                $this->Flash->error('Thêm bài viết thất bại. Vui lòng thử lại !', array(
+                $this->Flash->error('Thêm bài viết thất bại. Vui lòng thử lại !', [
                     'key' => 'add-post',
-                    'params' => array()
-                ));
+                    'params' => []
+                ]);
             } else {
-                $this->Flash->error($messageValidation, array(
+                $this->Flash->error($messageValidation, [
                     'key' => 'add-post',
-                    'params' => array('escape' => false)
-                ));
+                    'params' => ['escape' => false]
+                ]);
             }
         }
         $this->set(compact('categoryModel', 'errorsValidator'));
@@ -329,10 +329,10 @@ class UsersController extends AppController
         $dateNow = Time::now();
         $dateUpdate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
         $this->loadModel('Category');
-        $editCategory = $this->Category->get($id, array(
-            'contain' => array()
-        ));
-        if ($this->request->is(array('patch', 'post', 'put'))) {
+        $editCategory = $this->Category->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
 
             //update category
             $arrayCategory = $this->request->getData();
@@ -341,11 +341,11 @@ class UsersController extends AppController
             $categoryData = $this->Category->patchEntity($editCategory, $arrayCategory);
 
             if ($this->Category->save($categoryData)) {
-                $this->Flash->success('Sửa chuyên mục thành công', array(
+                $this->Flash->success('Sửa chuyên mục thành công', [
                     'key' => 'edit-category',
-                    'params' => array()
-                ));
-                return $this->redirect(array('action' => 'editCategory/'.$id.''));
+                    'params' => []
+                ]);
+                return $this->redirect(['action' => 'editCategory/'.$id.'']);
             } else {
                 //validator
                 $messageValidation = '';
@@ -360,10 +360,10 @@ class UsersController extends AppController
                     }
                 }
 
-                $this->Flash->error($messageValidation, array(
+                $this->Flash->error($messageValidation, [
                     'key' => 'edit-category',
-                    'params' => array('escape' => false)
-                ));
+                    'params' => ['escape' => false]
+                ]);
             }
         }
 
@@ -384,10 +384,10 @@ class UsersController extends AppController
         $dateNow = Time::now();
         $dateUpdate = $dateNow->i18nFormat('yyyy-MM-dd HH:mm:ss');
         $this->loadModel('Posts');
-        $editPost = $this->Posts->get($id, array(
-            'contain' => array()
-        ));
-        if ($this->request->is(array('patch', 'post', 'put'))) {
+        $editPost = $this->Posts->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
             $arrayPost = $this->request->getData();
             $arrayPost['updated_at'] = $dateUpdate;
             $fileName = $this->request->getData('post-image');
@@ -398,11 +398,11 @@ class UsersController extends AppController
             }
             $postData = $this->Posts->patchEntity($editPost, $arrayPost);
             if ($this->Posts->save($postData)) {
-                $this->Flash->success('Sửa bài viết thành công', array(
+                $this->Flash->success('Sửa bài viết thành công', [
                     'key' => 'edit-post',
-                    'params' => array()
-                ));
-                return $this->redirect(array('action' => 'editPost/'.$id.''));
+                    'params' => []
+                ]);
+                return $this->redirect(['action' => 'editPost/'.$id.'']);
             } else {
                 //validator
                 $messageValidation = '';
@@ -416,10 +416,10 @@ class UsersController extends AppController
                         $messageValidation .= $valuekeyMessage;
                     }
                 }
-                $this->Flash->success($messageValidation, array(
+                $this->Flash->success($messageValidation, [
                     'key' => 'edit-post',
-                    'params' => array('escape' => false)
-                ));
+                    'params' => ['escape' => false]
+                ]);
             }
         }
         
@@ -436,24 +436,24 @@ class UsersController extends AppController
      */
     public function deleteCategory()
     {
-        $this->request->allowMethod(array('post', 'delete'));
+        $this->request->allowMethod(['post', 'delete']);
         $idCategory = $this->request->getData('category-id');
         $this->loadModel('Category');
         $deleteCategory = $this->Category->get($idCategory);
         if ($this->Category->delete($deleteCategory)) {
-            $this->Flash->success('Xóa chuyên mục thành công', array(
+            $this->Flash->success('Xóa chuyên mục thành công', [
                 'key' => 'delete-category',
-                'params' => array()
-            ));
+                'params' => []
+            ]);
         } else {
-            $this->Flash->error('Xóa chuyên mục thất bại. Vui lòng thử lại !', array(
+            $this->Flash->error('Xóa chuyên mục thất bại. Vui lòng thử lại !', [
                 'key' => 'delete-category',
-                'params' => array()
-            ));
+                'params' => []
+            ]);
 
         }
 
-        return $this->redirect(array('action' => 'listCategory'));
+        return $this->redirect(['action' => 'listCategory']);
     }
 
     /**
@@ -464,22 +464,22 @@ class UsersController extends AppController
      */
     public function deletePost()
     {
-        $this->request->allowMethod(array('post', 'delete'));
+        $this->request->allowMethod(['post', 'delete']);
         $idPost = $this->request->getData('post-id');
         $this->loadModel('Posts');
         $deletePost = $this->Posts->get($idPost);
         if ($this->Posts->delete($deletePost)) {
-            $this->Flash->success('Xóa bài viết thành công', array(
+            $this->Flash->success('Xóa bài viết thành công', [
                 'key' => 'delete-post',
-                'params' => array()
-            ));
+                'params' => []
+            ]);
         } else {
-            $this->Flash->error('Xóa bài viết thất bại, vui lòng thử lại !', array(
+            $this->Flash->error('Xóa bài viết thất bại, vui lòng thử lại !', [
                 'key' => 'delete-post',
-                'params' => array()
-            ));
+                'params' => []
+            ]);
         }
 
-        return $this->redirect(array('action' => 'listPost'));
+        return $this->redirect(['action' => 'listPost']);
     }
 }

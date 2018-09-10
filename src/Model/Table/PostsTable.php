@@ -53,14 +53,14 @@ class PostsTable extends Table
             ->maxLength('post_title', 191, 'Tên bài viết tối đa 191 kí tự')
             ->requirePresence('post_title', 'create')
             ->notEmpty('post_title', 'Tên bài viết không được bỏ trống')
-            ->add('post_title', 'unique', array('rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên bài viết đã có'));
+            ->add('post_title', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên bài viết đã có']);
 
         $validator
             ->scalar('post_slug')
             ->maxLength('post_slug', 191, 'Đường dẫn của bài viết tối đa 191 kí tự')
             ->requirePresence('post_slug', 'create')
             ->notEmpty('post_slug', 'Đường dẫn của bài viết không được bỏ trống')
-            ->add('post_slug', 'unique', array('rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Trùng đường dẫn bài viết'));
+            ->add('post_slug', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Trùng đường dẫn bài viết']);
         $validator
             ->scalar('post_description')
             ->maxLength('post_description', 16777215, 'Mô tả ngắn quá dài')
@@ -89,8 +89,8 @@ class PostsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->isUnique(array('post_title')));
-        $rules->add($rules->isUnique(array('post_slug')));
+        $rules->add($rules->isUnique(['post_title']));
+        $rules->add($rules->isUnique(['post_slug']));
 
         return $rules;
     }

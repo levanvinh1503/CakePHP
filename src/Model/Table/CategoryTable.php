@@ -53,14 +53,14 @@ class CategoryTable extends Table
             ->maxLength('category_name', 191, 'Tên chuyên mục tối đa 191 kí tự')
             ->requirePresence('category_name', 'create')
             ->notEmpty('category_name', 'Tên chuyên mục không được bỏ trống')
-            ->add('category_name', 'unique', array('rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên chuyên mục đã có'));
+            ->add('category_name', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Tên chuyên mục đã có']);
         
         $validator
             ->scalar('category_slug')
             ->maxLength('category_slug', 191)
             ->requirePresence('category_slug', 'create')
             ->notEmpty('category_slug', 'Đường dẫn chuyên mục không được bỏ trống')
-            ->add('category_slug', 'unique', array('rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Trùng đường dẫn'));
+            ->add('category_slug', 'unique', ['rule' => 'validateUnique', 'provider' => 'table', 'message' => 'Trùng đường dẫn']);
 
         $validator
             ->dateTime('created_at')
@@ -82,8 +82,8 @@ class CategoryTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->isUnique(array('category_name')));
-        $rules->add($rules->isUnique(array('category_slug')));
+        $rules->add($rules->isUnique(['category_name']));
+        $rules->add($rules->isUnique(['category_slug']));
 
         return $rules;
     }

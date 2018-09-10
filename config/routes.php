@@ -52,7 +52,7 @@ Router::scope('/', function (RouteBuilder $routes) {
      * its action called 'display', and we pass a param to select the view file
      * to use (in this case, src/Template/Pages/home.ctp)...Router::scope('/', function (RouteBuilder $routes) {
      */
-    $routes->connect('/', array('controller' => 'Pages', 'action' => 'display'));
+    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display']);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
@@ -75,23 +75,23 @@ Router::scope('/', function (RouteBuilder $routes) {
      * routes you want in your application.
      */
     $routes->fallbacks(DashedRoute::class);
-    $routes->connect('/login', array('controller' => 'Users', 'action' => 'login'));
-    $routes->connect('/register', array('controller' => 'Users', 'action' => 'register'));
-    $routes->connect('/logout', array('controller' => 'Users', 'action' => 'logout'));
+    $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+    $routes->connect('/register', ['controller' => 'Users', 'action' => 'register']);
+    $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
 });
 
 Router::scope('/users', function ($routes) {
-    $routes->connect('/dash-board', array('controller' => 'Users', 'action' => 'dashBoard'));
-    $routes->connect('/list-category', array('controller' => 'Users', 'action' => 'listCategory'), array('id' => '\d+'));
+    $routes->connect('/dash-board', ['controller' => 'Users', 'action' => 'dashBoard']);
+    $routes->connect('/list-category', ['controller' => 'Users', 'action' => 'listCategory'], ['id' => '\d+']);
 
-    $routes->connect('/list-post', array('controller' => 'Users', 'action' => 'listPost'), array('id' => '\d+'));
+    $routes->connect('/list-post', ['controller' => 'Users', 'action' => 'listPost'], ['id' => '\d+']);
 
-    $routes->connect('/add-post', array('controller' => 'Users', 'action' => 'addPost'), array('name' => 'addpost'));
+    $routes->connect('/add-post', ['controller' => 'Users', 'action' => 'addPost'], ['name' => 'addpost']);
 
-    $routes->connect('/edit-post/:id', array('controller' => 'Users', 'action' => 'editPost'), array('id' => '\d+', 'pass' => array('id')));
-    $routes->connect('/edit-category/:id', array('controller' => 'Users', 'action' => 'editCategory'), array('id' => '\d+', 'pass' => array('id')));
-    $routes->connect('/add-category', array('controller' => 'Users', 'action' => 'addCategory'));
-    $routes->connect('/add-post', array('controller' => 'Users', 'action' => 'addPost'));
-    $routes->connect('/delete-category', array('controller' => 'Users', 'action' => 'deleteCategory'));
-    $routes->connect('/delete-post', array('controller' => 'Users', 'action' => 'deletePost'));
+    $routes->connect('/edit-post/:id', ['controller' => 'Users', 'action' => 'editPost'], ['id' => '\d+', 'pass' => ['id']]);
+    $routes->connect('/edit-category/:id', ['controller' => 'Users', 'action' => 'editCategory'], ['id' => '\d+', 'pass' => ['id']]);
+    $routes->connect('/add-category', ['controller' => 'Users', 'action' => 'addCategory']);
+    $routes->connect('/add-post', ['controller' => 'Users', 'action' => 'addPost']);
+    $routes->connect('/delete-category', ['controller' => 'Users', 'action' => 'deleteCategory']);
+    $routes->connect('/delete-post', ['controller' => 'Users', 'action' => 'deletePost']);
 });
