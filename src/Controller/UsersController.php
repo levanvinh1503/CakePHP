@@ -662,7 +662,7 @@ class UsersController extends AppController
                         $messageValidate .= $this->FunctionLb->validateEmail($connectDB, 'tmp_tbl_staff', 'email');
                         //Insert data into table tbl_staff
                         if (empty($messageValidate)) {
-                            //$connectDB->execute("TRUNCATE TABLE tbl_staff");
+                            $connectDB->execute("TRUNCATE TABLE tbl_staff");
                             //Insert data into table tbl_staff
                             $connectDB->execute("INSERT INTO tbl_staff (tbl_staff.id,tbl_staff.name,tbl_staff.email,tbl_staff.address)
                               SELECT tmp_tbl_staff.id, tmp_tbl_staff.name, tmp_tbl_staff.email, tmp_tbl_staff.address FROM tmp_tbl_staff
@@ -707,8 +707,11 @@ class UsersController extends AppController
      */
     public function exportFile()
     {
+        //Check the method post or delte
+        $this->request->allowMethod(['post']);
         $this->loadModel('TblStaff');
         $arrayUsers = $this->TblStaff->find('all');
         $this->FunctionLb->writeCsv($arrayUsers);
+        exit();
     }
 }

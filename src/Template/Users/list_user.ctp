@@ -1,5 +1,5 @@
 <div class="list-category-admin">
-    <h2 class="title-dashborad">Danh sách chuyên mục</h2>
+    <h2 class="title-dashborad">Danh sách người dùng</h2>
     <?= $this->Flash->render('import-file')?>
     <!-- Table Category -->
     <div class="search-block">
