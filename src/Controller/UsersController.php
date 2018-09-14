@@ -6,6 +6,8 @@ use Cake\I18n\Time;
 use Cake\Validation\Validator;
 use Cake\Filesystem\File;
 use Cake\ORM\Query;
+use Cake\Datasource\ConnectionManager;
+use Cake\Collection\Collection;
 
 /**
  * Users Controller
@@ -573,5 +575,139 @@ class UsersController extends AppController
         }
 
         return $this->redirect(['action' => 'listPost']);
+    }
+
+    public function listUser()
+    {
+        //Use layout Layout/dashboard.ctp
+        $this->viewBuilder()->setLayout('dashboard');
+        //Load model Category
+        $this->loadModel('TblStaff');
+        //Get the keyword "search"
+        $keySearch = trim($this->request->getQuery('search'), '%');
+        //Set keyword
+        $keyWord = '%' . $keySearch . '%';
+        //Get, set keyword submit form search
+        if ($this->request->is(['post'])) {
+            $modePost = $this->request->getData('mode');
+            if ($modePost === 'search') {
+                $keySearch = $this->request->getData('search');
+                $keyWord = '%' . $keySearch . '%';
+            }
+        }
+
+        //Search by keyword
+        $arrayUsers = $this->paginate($this->TblStaff->find()->where([
+            'OR' => [
+                'id LIKE' => $keyWord,
+                'name LIKE' => $keyWord,
+                'address LIKE' => $keyWord,
+                'email LIKE' => $keyWord,
+            ]
+        ]), [
+            'limit' => 50,
+        ]);
+
+        //Redirect page with keyword
+        if ($this->request->is(['post'])) {
+            $modePost = $this->request->getData('mode');
+            //Search
+            if ($modePost === 'search') {
+                $this->redirect(['controller' => 'Users', 'action' => 'listUser', 'search' => $keyWord]);
+                $this->set(compact('arrayUsers'));
+            }
+            //Import file
+            if ($modePost === 'import-file') {
+                $messageValidate = "";
+                //Get file
+                $fileImport = $this->request->getData('import-file');
+                //Get extension file
+                $extFile = pathinfo($fileImport['name'], PATHINFO_EXTENSION);
+                if (!empty($fileImport['tmp_name']) && $extFile == 'csv') {
+                    //Open file
+                    $fileHandle = fopen($fileImport['tmp_name'], 'r');
+                    //Get header file
+                    $headerFile = fgetcsv($fileHandle);
+                    $headerDefault = ['ID', 'Name', 'Email', 'Address'];
+                    //Check header file
+                    $checkFormatFile = array_diff($headerFile, $headerDefault);
+                    //Close file
+                    fclose($fileHandle);
+                    //Check format file
+                    if (!empty($checkFormatFile)) {
+                        $this->Flash->error(FORMAT_ERR, [
+                            'key' => 'import-file',
+                            'params' => [
+                                'escape' => false
+                            ]
+                        ]);
+                    } else {
+                        //Connect DB
+                        $connectDB = ConnectionManager::get('default');
+                        //Set auto_increment = 2
+                        $connectDB->execute("ALTER TABLE tmp_tbl_staff AUTO_INCREMENT = 2");
+                        //Load data file into temp table
+                        $connectDB->execute("LOAD DATA INFILE '".$fileImport['name']."' INTO TABLE tmp_tbl_staff FIELDS TERMINATED BY ',' IGNORE 1 LINES");
+                        //Check validate duplicate column id
+                        $messageValidate .= $this->FunctionLb->validateDuplicate($connectDB, 'tmp_tbl_staff', 'id');
+                        //Check validate maxlenght column id
+                        $messageValidate .= $this->FunctionLb->validateLenght($connectDB, 'tmp_tbl_staff', 11, 'id');
+                        //Check validate numeric column id
+                        $messageValidate .= $this->FunctionLb->validateNumeric($connectDB, 'tmp_tbl_staff', 'id');
+                        //Check validate duplicate column email
+                        $messageValidate .= $this->FunctionLb->validateDuplicate($connectDB, 'tmp_tbl_staff', 'email');
+                        //Check validate maxlenght column email
+                        $messageValidate .= $this->FunctionLb->validateLenght($connectDB, 'tmp_tbl_staff', 100, 'email');
+                        //Check validate format of column email
+                        $messageValidate .= $this->FunctionLb->validateEmail($connectDB, 'tmp_tbl_staff', 'email');
+                        //Insert data into table tbl_staff
+                        if (empty($messageValidate)) {
+                            //Insert data into table tbl_staff
+                            $connectDB->execute("INSERT INTO tbl_staff (tbl_staff.id,tbl_staff.name,tbl_staff.email,tbl_staff.address)
+                              SELECT tmp_tbl_staff.id, tmp_tbl_staff.name, tmp_tbl_staff.email, tmp_tbl_staff.address FROM tmp_tbl_staff
+                              ON DUPLICATE KEY UPDATE tbl_staff.id = tbtmp_tbl_staffl_staff.id");
+                            //Set message insert success
+                            $this->Flash->success(IMPORT_SUCCESS, [
+                                'key' => 'import-file',
+                                'params' => [
+                                    'escape' => false
+                                ]
+                            ]);
+                        } else {
+                            $this->Flash->error($messageValidate, [
+                                'key' => 'import-file',
+                                'params' => [
+                                    'escape' => false
+                                ]
+                            ]);
+                        }
+                        //Remove data table tmp_tbl_staff
+                        $connectDB->execute("TRUNCATE TABLE tmp_tbl_staff");
+                    }
+                } else {
+                    $this->Flash->error(UPLOAD_ERR, [
+                        'key' => 'import-file',
+                        'params' => [
+                            'escape' => false
+                        ]
+                    ]);
+                }
+                //Redirect view
+                $this->redirect(['controller' => 'Users', 'action' => 'listUser']);
+            }
+        }
+
+        //Set data to view
+        $this->set(compact('arrayUsers', 'keySearch'));
+    }
+
+    /**
+     * Export data from database into csv file
+     */
+    public function exportFile()
+    {
+        $this->loadModel('TblStaff');
+        $arrayUsers = $this->TblStaff->find('all');
+        $this->FunctionLb->writeCsv($arrayUsers);
     }
 }

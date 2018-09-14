@@ -171,3 +171,10 @@ define('NUMBER_USER_PHONENUMBER', 'Số điện thoại phải là số');
 
 define('MAXLENGTH_USER_ADDRESS', 'Địa chỉ tối đa 191 kí tự');
 define('REQUIRED_USER_ADDRESS', 'Địa chỉ không được bỏ trống');
+
+/**
+ * Message Import file
+ */
+define('IMPORT_SUCCESS', 'Import file thành công !');
+define('UPLOAD_ERR', 'Lỗi upload !');
+define('FORMAT_ERR', 'Sai cấu trúc file !');

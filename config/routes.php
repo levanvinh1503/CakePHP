@@ -94,4 +94,7 @@ Router::scope('/users', function ($routes) {
     $routes->connect('/add-post', ['controller' => 'Users', 'action' => 'addPost']);
     $routes->connect('/delete-category', ['controller' => 'Users', 'action' => 'deleteCategory']);
     $routes->connect('/delete-post', ['controller' => 'Users', 'action' => 'deletePost']);
+    $routes->connect('/list-user', ['controller' => 'Users', 'action' => 'listUser'], ['id' => '\d+']);
+    $routes->connect('/export', ['controller' => 'Users', 'action' => 'exportFile']);
+    $routes->connect('/send-data', ['controller' => 'Users', 'action' => 'saveData']);
 });

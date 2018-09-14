@@ -103,6 +103,14 @@ $cakeDescription = 'Demo CakePHP';
                         <!-- End menu child post -->
                     </li>
                     <li>
+                        <?= $this->Html->link('<em class="fa fa-bars"></em> Danh sách người dùng', [
+                            'controller' => 'Users',
+                            'action' => 'listUser',
+                        ], [
+                            'escape' => false
+                        ])?>
+                    </li>
+                    <li>
                         <?= $this->Html->link('<em class="fa fa-power-off"></em> Đăng xuất', [
                             'controller' => 'Users',
                             'action' => 'logout',
