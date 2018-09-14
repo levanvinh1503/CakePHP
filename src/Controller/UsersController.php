@@ -662,10 +662,11 @@ class UsersController extends AppController
                         $messageValidate .= $this->FunctionLb->validateEmail($connectDB, 'tmp_tbl_staff', 'email');
                         //Insert data into table tbl_staff
                         if (empty($messageValidate)) {
+                            //$connectDB->execute("TRUNCATE TABLE tbl_staff");
                             //Insert data into table tbl_staff
                             $connectDB->execute("INSERT INTO tbl_staff (tbl_staff.id,tbl_staff.name,tbl_staff.email,tbl_staff.address)
                               SELECT tmp_tbl_staff.id, tmp_tbl_staff.name, tmp_tbl_staff.email, tmp_tbl_staff.address FROM tmp_tbl_staff
-                              ON DUPLICATE KEY UPDATE tbl_staff.id = tbtmp_tbl_staffl_staff.id");
+                              ON DUPLICATE KEY UPDATE tbl_staff.id = tmp_tbl_staff.id");
                             //Set message insert success
                             $this->Flash->success(IMPORT_SUCCESS, [
                                 'key' => 'import-file',
